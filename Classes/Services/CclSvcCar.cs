@@ -26,6 +26,12 @@ namespace Ampel__2._0.Classes.Services
 
         private CclContCrossroad Crossroad { get; set; }
 
+        internal int deceleration { get; set; }
+
+        internal int acceleration { get; set; }
+
+        //ToDo; Move Methode anlegen -> verändert position anhand der geeschwindigkeit, vorher guckt es ob Autos im weg sind 
+
         public CclSvcCar(CclContCrossroad crossroad)
         {
             Crossroad = crossroad;

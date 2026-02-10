@@ -2,6 +2,7 @@
 using Ampel__2._0.Classes.Services;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,17 +11,17 @@ namespace Ampel__2._0.Classes.Container
 {
     internal class CclContCrossroad
     {
-        public Form1 Form { get; set; }
+        public Size WindowSize { get; set; }
         public List<CclContRoad> Roads { get; } = new List<CclContRoad>();
 
         public CclContCenter Center { get; }
 
         public List<CclSvcCar> l_AllCars { get; set; } = new List<CclSvcCar>();
 
-        public CclContCrossroad(Form1 form)
+        public CclContCrossroad(Size windowSize)
         {
-            Form = form;
-            Center = new CclContCenter(form);
+            WindowSize = windowSize;
+            Center = new CclContCenter(windowSize);
             Center.CreatArea(2, 2);
             CreatRoads();
         }
@@ -33,16 +34,16 @@ namespace Ampel__2._0.Classes.Container
                 switch (i)
                 {
                     case 1:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.SouthToNorth,Center, Form);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.SouthToNorth,Center, WindowSize);
                         break;
                     case 2:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.EastToWest, Center, Form);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.EastToWest, Center, WindowSize);
                         break;
                     case 3:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.NorthToSouth, Center, Form);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.NorthToSouth, Center, WindowSize);
                         break;
                     case 4:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.WestToEast, Center, Form);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.WestToEast, Center, WindowSize);
                         break;
                     default:
                         Road = null;

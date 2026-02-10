@@ -15,18 +15,18 @@ namespace Ampel__2._0.Classes.Container
         internal List<CclContLane> Lanes { get; }
         internal double SpeedLimit { get; set; }
         internal CclContCrossroad Crossroad { get; }
-        internal Form1 Form { get; set; }
+        internal Size WindowSize { get; set; }
         internal CclContCenter Center { get; }
         internal RoadDirection Direction { get; }
 
-        public CclContRoad(double speedLimit, CclContCrossroad crossroad, RoadDirection direction, CclContCenter center, Form1 form)
+        public CclContRoad(double speedLimit, CclContCrossroad crossroad, RoadDirection direction, CclContCenter center, Size windowSize)
         {
             SpeedLimit = speedLimit;
             Crossroad = crossroad;
             Direction = direction;
             Center = center;
             Lanes = new List<CclContLane>();
-            Form = form;
+            WindowSize = windowSize;
 
             CalculateArea();
             CreatLanes();
@@ -43,20 +43,20 @@ namespace Ampel__2._0.Classes.Container
             switch (Direction)
             {
                 case RoadDirection.NorthToSouth:
-                    Position = new Point(Center.Position.X, Center.Position.Y - Form.WindowSize.Height/4);
-                    Size = new Size(CstConstants.C_iLaneWidth * Lanes.Count, Form.Height / 2 + 20);
+                    Position = new Point(Center.Position.X, Center.Position.Y - WindowSize.Height/4);
+                    Size = new Size(CstConstants.C_iLaneWidth * Lanes.Count, WindowSize.Height / 2 + 20);
                     break;
                 case RoadDirection.SouthToNorth:
-                    Position = new Point(Center.Position.X, Center.Position.Y + Form.WindowSize.Height / 4);
-                    Size = new Size(CstConstants.C_iLaneWidth * Lanes.Count, Form.Height / 2 + 20);
+                    Position = new Point(Center.Position.X, Center.Position.Y + WindowSize.Height / 4);
+                    Size = new Size(CstConstants.C_iLaneWidth * Lanes.Count, WindowSize.Height / 2 + 20);
                     break;
                 case RoadDirection.EastToWest:
-                    Position = new Point(Center.Position.X - Form.WindowSize.Width/4, Center.Position.Y);
-                    Size = new Size(Form.WindowSize.Width / 2 - 20, CstConstants.C_iLaneWidth * Lanes.Count);
+                    Position = new Point(Center.Position.X - WindowSize.Width/4, Center.Position.Y);
+                    Size = new Size(WindowSize.Width / 2 - 20, CstConstants.C_iLaneWidth * Lanes.Count);
                     break;
                 case RoadDirection.WestToEast:
-                    Position = new Point(Center.Position.X + Form.WindowSize.Width / 4, Center.Position.Y);
-                    Size = new Size(Form.WindowSize.Width/2 - 20, CstConstants.C_iLaneWidth * Lanes.Count);
+                    Position = new Point(Center.Position.X + WindowSize.Width / 4, Center.Position.Y);
+                    Size = new Size(WindowSize.Width/2 - 20, CstConstants.C_iLaneWidth * Lanes.Count);
                     break;
             }
         }

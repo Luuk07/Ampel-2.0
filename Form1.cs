@@ -24,7 +24,7 @@ namespace Ampel__2._0
             InitializeComponent();
             WindowRectangle = this.ClientRectangle;
             WindowSize = this.ClientSize;
-            Main = new CclSvcMain(this);
+            Main = new CclSvcMain(this.WindowSize);//ToDo: Nur Size übergeben
             this.Paint += Form1_PaintLanes;
             this.Paint += Form1_PaintCenter;
             this.Paint += Form1_PaintRoads;
@@ -117,7 +117,7 @@ namespace Ampel__2._0
         public void Form1_PaintCenter(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-
+            
             Rectangle rect = Main.Crossroad.Center.Area;
 
             using (Brush brush = new SolidBrush(Color.Black))
@@ -139,7 +139,6 @@ namespace Ampel__2._0
                     g.FillRectangle(brush, rect);
                 }
             }
-
         }
     }
 }
