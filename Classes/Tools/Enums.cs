@@ -20,4 +20,12 @@ namespace Ampel__2._0.Classes.Tools
         SouthToNorth,
         WestToEast,
     }
+    public enum TrafficLightState
+    {
+        Red,
+        Yellow,
+        Green
+    }
+
+
 }

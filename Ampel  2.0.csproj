@@ -50,9 +50,14 @@
     <Compile Include="Classes\Container\CclContCrossroad.cs" />
     <Compile Include="Classes\Container\CclContLane.cs" />
     <Compile Include="Classes\Container\CclContRoad.cs" />
+    <Compile Include="Classes\Container\CclContTrafficLight.cs" />
     <Compile Include="Classes\Container\_base\CclContGeometrieBase.cs" />
+    <Compile Include="Classes\EventArgs\CeaNextStepData.cs" />
     <Compile Include="Classes\Services\CclSvcCar.cs" />
     <Compile Include="Classes\Services\CclSvcMain.cs" />
+    <Compile Include="Classes\Services\CclSvcSpawnPoint.cs" />
+    <Compile Include="Classes\Services\CclSvcTrafficLightManager.cs" />
+    <Compile Include="Classes\Tools\CclRandom.cs" />
     <Compile Include="Classes\Tools\CstConstants.cs" />
     <Compile Include="Classes\Tools\Enums.cs" />
     <Compile Include="Form1.cs">

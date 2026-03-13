@@ -1,4 +1,5 @@
-﻿using Ampel__2._0.Classes.Services;
+﻿using Ampel__2._0.Classes.EventArgs;
+using Ampel__2._0.Classes.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,14 +25,21 @@ namespace Ampel__2._0
             InitializeComponent();
             WindowRectangle = this.ClientRectangle;
             WindowSize = this.ClientSize;
-            Main = new CclSvcMain(this.WindowSize);//ToDo: Nur Size übergeben
-            this.Paint += Form1_PaintLanes;
+            Main = new CclSvcMain(this.WindowSize);//ToDo: Nur Size übergeben ++
+            Main.NextStep += Main_NextStep;
             this.Paint += Form1_PaintCenter;
             this.Paint += Form1_PaintRoads;
+            this.Paint += Form1_PaintLanes;
+            this.Paint += Form1_PaintTrafficLights;
+            this.Paint += Form1_PaintCar;
             //ToDo: Mittelpunkt des Fensters der Mainklasse geben++
         }
 
-        //ToDo: Wenn alles Fertig -> alle recs zeichnen
+        private void Main_NextStep(object sender, CeaNextStepData e)
+        {
+            Invalidate();
+            this.DoubleBuffered = true; // verhindert flackern
+        }
 
         public void Form1_PaintLanes(object sender, PaintEventArgs e)
         {
@@ -44,10 +52,11 @@ namespace Ampel__2._0
                 {
                     using (Brush brush = new SolidBrush(Color.Green))
                     {
+                        g.DrawRectangle(Pens.Blue, Lane.StopArea);
                         g.FillRectangle(brush, rect);
                     }
                 }
-                else 
+                else
                 {
                     using (Brush brush = new SolidBrush(Color.Red))
                     {
@@ -63,6 +72,7 @@ namespace Ampel__2._0
                 {
                     using (Brush brush = new SolidBrush(Color.Green))
                     {
+                        g.DrawRectangle(Pens.Blue, Lane.StopArea);
                         g.FillRectangle(brush, rect);
                     }
                 }
@@ -82,6 +92,7 @@ namespace Ampel__2._0
                 {
                     using (Brush brush = new SolidBrush(Color.Green))
                     {
+                        g.DrawRectangle(Pens.Blue, Lane.StopArea);
                         g.FillRectangle(brush, rect);
                     }
                 }
@@ -90,6 +101,7 @@ namespace Ampel__2._0
                     using (Brush brush = new SolidBrush(Color.Red))
                     {
                         g.FillRectangle(brush, rect);
+
                     }
                 }
             }
@@ -101,6 +113,7 @@ namespace Ampel__2._0
                 {
                     using (Brush brush = new SolidBrush(Color.Green))
                     {
+                        g.DrawRectangle(Pens.Blue, Lane.StopArea);
                         g.FillRectangle(brush, rect);
                     }
                 }
@@ -117,13 +130,14 @@ namespace Ampel__2._0
         public void Form1_PaintCenter(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            
+
             Rectangle rect = Main.Crossroad.Center.Area;
 
-            using (Brush brush = new SolidBrush(Color.Black))
+            using (Brush brush = new SolidBrush(Color.Blue))
             {
                 g.FillRectangle(brush, rect);
-            };
+            }
+            ;
         }
 
         public void Form1_PaintRoads(object sender, PaintEventArgs e)
@@ -135,6 +149,32 @@ namespace Ampel__2._0
                 Rectangle rect = Road.Area;
 
                 using (Brush brush = new SolidBrush(Color.Black))
+                {
+                    g.FillRectangle(brush, rect);
+                }
+            }
+        }
+        public void Form1_PaintCar(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            foreach (var car in Main.Crossroad.l_AllCars.ToList())
+            {
+                using (Brush brush = new SolidBrush(Color.Yellow))
+                {
+                    g.FillRectangle(brush, car.Area);
+                    g.DrawRectangle(Pens.Red, car.CheckLineArea);
+                }
+
+            }
+        }
+
+        public void Form1_PaintTrafficLights(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            foreach (var light in Main.Crossroad.Roads.Select(r => r.TrafficLight))
+            {
+                Rectangle rect = light.Area;
+                using (Brush brush = new SolidBrush(light.CurrentState == Classes.Tools.TrafficLightState.Green ? Color.Green : light.CurrentState == Classes.Tools.TrafficLightState.Yellow ? Color.Yellow : Color.Red))
                 {
                     g.FillRectangle(brush, rect);
                 }

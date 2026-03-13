@@ -12,68 +12,72 @@ namespace Ampel__2._0.Classes.Container
 {
     internal class CclContRoad: CclContGeometrieBase
     {
+        internal List<CclContLane> LanesToCenter {get { return Lanes.Where(l => l.LeedsToTrafficlight).ToList();}}
         internal List<CclContLane> Lanes { get; }
-        internal double SpeedLimit { get; set; }
+        internal int SpeedLimit { get; set; }
         internal CclContCrossroad Crossroad { get; }
         internal Size WindowSize { get; set; }
         internal CclContCenter Center { get; }
         internal RoadDirection Direction { get; }
 
-        public CclContRoad(double speedLimit, CclContCrossroad crossroad, RoadDirection direction, CclContCenter center, Size windowSize)
+        internal int LaneCount { get; }
+        internal bool HasSpawnPoint { get; }
+        internal CclRandom Random { get; }
+
+        internal CclContTrafficLight TrafficLight { get; }
+
+
+        public CclContRoad(int speedLimit, CclContCrossroad crossroad, RoadDirection direction, CclContCenter center, Size windowSize, CclRandom random, int laneCount, bool hasSpawnPoint)
         {
+            HasSpawnPoint = hasSpawnPoint;
+            LaneCount = laneCount;
             SpeedLimit = speedLimit;
             Crossroad = crossroad;
             Direction = direction;
             Center = center;
-            Lanes = new List<CclContLane>();
+            Random = random;
             WindowSize = windowSize;
+            Lanes = new List<CclContLane>();
 
-            CalculateArea();
+            CalculateArea(); 
             CreatLanes();
-            //ToDo: bekommen Center++
-            //ToDo: Client Rectangle übergeben, um ihre Länge zu Berchen
-
+            TrafficLight = new CclContTrafficLight(this);
         }
 
-        //ToDo: Höhe und Breite anhand von Center und Client Rectangle des Windows berechnen ++
-             // Habe das jetzt doch mit Client Size gemacht
         private void CalculateArea()
         {
-           
             switch (Direction)
             {
                 case RoadDirection.NorthToSouth:
-                    Position = new Point(Center.Position.X, Center.Position.Y - WindowSize.Height/4);
-                    Size = new Size(CstConstants.C_iLaneWidth * Lanes.Count, WindowSize.Height / 2 + 20);
+                    Position = new Point(Center.Position.X, Center.Position.Y - (WindowSize.Height/4));
+                    Size = new Size(CstConstants.C_iLaneWidth * LaneCount, WindowSize.Height / 2 - Center.Area.Width );
                     break;
                 case RoadDirection.SouthToNorth:
                     Position = new Point(Center.Position.X, Center.Position.Y + WindowSize.Height / 4);
-                    Size = new Size(CstConstants.C_iLaneWidth * Lanes.Count, WindowSize.Height / 2 + 20);
+                    Size = new Size(CstConstants.C_iLaneWidth * LaneCount, WindowSize.Height / 2 - Center.Area.Width );
                     break;
                 case RoadDirection.EastToWest:
-                    Position = new Point(Center.Position.X - WindowSize.Width/4, Center.Position.Y);
-                    Size = new Size(WindowSize.Width / 2 - 20, CstConstants.C_iLaneWidth * Lanes.Count);
+                    Position = new Point(Center.Position.X + WindowSize.Width/4, Center.Position.Y);
+                    Size = new Size(WindowSize.Width / 2 - Center.Area.Height, CstConstants.C_iLaneWidth * LaneCount);
                     break;
                 case RoadDirection.WestToEast:
-                    Position = new Point(Center.Position.X + WindowSize.Width / 4, Center.Position.Y);
-                    Size = new Size(WindowSize.Width/2 - 20, CstConstants.C_iLaneWidth * Lanes.Count);
+                    Position = new Point(Center.Position.X - WindowSize.Width/4, Center.Position.Y);
+                    Size = new Size(WindowSize.Width/2 - Center.Area.Height , CstConstants.C_iLaneWidth * LaneCount);
                     break;
             }
         }
-
-        // Lanes werden richtig erzeugt aber falsch gezeichnet, keine Ahnung wo der Fehler ist da
         private void CreatLanes()
         {
             for (int i = 0; i < 2; i++)
             {
                 if (i == 0)
                 {
-                    CclContLane Lane = new CclContLane(true, this);
+                    CclContLane Lane = new CclContLane(HasSpawnPoint, true, this, Crossroad, Random); 
                     Lanes.Add(Lane);
                 }
                 else
                 {
-                    CclContLane Lane = new CclContLane(false, this);
+                    CclContLane Lane = new CclContLane(false, false, this, Crossroad, Random);
                     Lanes.Add(Lane);
                 } 
             }

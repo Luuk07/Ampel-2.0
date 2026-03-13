@@ -15,10 +15,7 @@ namespace Ampel__2._0.Classes.Container
         internal Size WindowSize { get; }
         public CclContCenter(Size windowSize)
         {
-            //ToDo: Berechnet eigene Position um den Mittelpunkt herum ++
             WindowSize = windowSize;
-
-
         }
 
         public void CreatArea(int lanesInCrossroadNorthSouth, int lanesInCrossroadSouthWest) 

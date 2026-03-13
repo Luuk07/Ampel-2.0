@@ -11,7 +11,7 @@ namespace Ampel__2._0.Classes.Container._base
     {
         internal Rectangle Area { get { return new Rectangle(Position.X - Size.Width / 2, Position.Y - Size.Height / 2, Size.Width, Size.Height); }} //ToDo: Automatisch aus position und größe berechnen++
 
-        internal Point Position { get; set; } // ToDo: MIttelpunkt des Autos++
+        internal Point Position { get; set; }// ToDo: MIttelpunkt des Autos++
 
         public Size Size { get; protected set; } 
 

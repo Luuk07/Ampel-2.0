@@ -12,42 +12,49 @@ namespace Ampel__2._0.Classes.Container
 {
     internal class CclContLane : CclContGeometrieBase
     {
-        internal Rectangle StopArea { get; } //ToDo: Abhängig von der Straße, die Position des Stopbereichs festlegen ++
-        internal Point StartPoint { get; } //ToDO: Abhängig von der Straße, die Position des Startpunkts festlegen++
-
+        internal Rectangle StopArea { get; } 
+        internal Point StartPoint { get; } 
+        internal CclSvcSpawnPoint SpawnPoint { get; }
         internal CclContRoad Road { get; }
-        internal bool LeedsToTrafficlight { get; set; }
-
+        internal bool LeedsToTrafficlight { get { return SpawnPoint != null; } }
         internal List<CclSvcCar> l_carsInLane { get; } = new List<CclSvcCar>();
-
-
-
-        public CclContLane(bool leedsToTrafficLight, CclContRoad road)
+        internal double SpawnChance { get; set; }
+        public CclContLane(bool createSpawnPoint, bool leedsToTrafficLight, CclContRoad road, CclContCrossroad crossroad, CclRandom random)
         {
-            LeedsToTrafficlight = leedsToTrafficLight;
+            //LeedsToTrafficlight = leedsToTrafficLight;
             Road = road;
-           
-            if (LeedsToTrafficlight)
+
+            //ToDo: Es sollen nicht zwei Autos gleichzeitig spawnen können
+
+
+            if (createSpawnPoint)
             {
+                SpawnChance = 0.2;
                 switch (Road.Direction)
                 {
                     case RoadDirection.NorthToSouth:
                         Size = new Size(CstConstants.C_iLaneWidth, Road.Size.Height);
                         Position = new Point(Road.Position.X - CstConstants.C_iLaneWidth/2, Road.Position.Y);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
                         break;
                     case RoadDirection.SouthToNorth:
                         Size = new Size(CstConstants.C_iLaneWidth, Road.Size.Height);
                         Position = new Point(Road.Position.X + CstConstants.C_iLaneWidth / 2, Road.Position.Y);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
                         break;
                     case RoadDirection.EastToWest:
                         Size = new Size(Road.Size.Width, CstConstants.C_iLaneWidth);
-                        Position = new Point(Road.Position.X, Road.Position.Y + CstConstants.C_iLaneWidth / 2);
+                        Position = new Point(Road.Position.X, Road.Position.Y - CstConstants.C_iLaneWidth / 2);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
                         break;
                     case RoadDirection.WestToEast:
                         Size = new Size(Road.Size.Width, CstConstants.C_iLaneWidth);
-                        Position = new Point(Road.Position.X, Road.Position.Y - CstConstants.C_iLaneWidth / 2);
+                        Position = new Point(Road.Position.X, Road.Position.Y + CstConstants.C_iLaneWidth / 2);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
                         break;
                 }
+                StopArea = CalculateStopArea();
+                StartPoint = CalculateStartPoint();
             }
             else
             {
@@ -63,21 +70,16 @@ namespace Ampel__2._0.Classes.Container
                         break;
                     case RoadDirection.EastToWest:
                         Size = new Size(Road.Size.Width, CstConstants.C_iLaneWidth);
-                        Position = new Point(Road.Position.X, Road.Position.Y - CstConstants.C_iLaneWidth / 2);
+                        Position = new Point(Road.Position.X, Road.Position.Y + CstConstants.C_iLaneWidth / 2);
                         break;
                     case RoadDirection.WestToEast:
                         Size = new Size(Road.Size.Width, CstConstants.C_iLaneWidth);
-                        Position = new Point(Road.Position.X, Road.Position.Y + CstConstants.C_iLaneWidth / 2);
+                        Position = new Point(Road.Position.X, Road.Position.Y - CstConstants.C_iLaneWidth / 2);
                         break;
                 }
             }
-            StopArea = CalculateStopArea();
-            StartPoint = CalculateStartPoint();
-
-            //ToDo: Berechnung der Area der Lane abhängig von der Straße ++
-            //ToDo: Methode erstellen die Stop Area ++ und Start Point berechnet ++
+         
         }
-
 
         private Rectangle CalculateStopArea()
         {   
@@ -86,25 +88,33 @@ namespace Ampel__2._0.Classes.Container
                 return Rectangle.Empty;
             }
             var stopArea = new Rectangle();
+            double stopAreaPercentage = 0.20; 
+
 
             switch (Road.Direction)
             {
+                //ToDo: Die Stopping Area anhand der Lane Area berechnen
+
                 case RoadDirection.NorthToSouth:
-                    stopArea = new Rectangle(Position.X - Size.Width / 2, Position.Y - Size.Height / 2, Size.Width, Size.Height / 2);
+                    stopArea = new Rectangle(Area.X, Area.Y + Area.Height - (int)(Area.Height * stopAreaPercentage), Area.Width, (int)(Area.Height * stopAreaPercentage));
                     break;
+
                 case RoadDirection.SouthToNorth:
-                    stopArea = new Rectangle(Position.X - Size.Width / 2, Position.Y, Size.Width, Size.Height / 2);
+                    stopArea = new Rectangle(Area.X, Area.Y, Area.Width, (int)(Area.Height * stopAreaPercentage));
                     break;
+
                 case RoadDirection.EastToWest:
-                    stopArea = new Rectangle(Position.X - Size.Width / 2, Position.Y + Size.Height / 2, Size.Height, Size.Width/2);
+                    stopArea = new Rectangle(Area.X, Area.Y, (int)(Area.Height * stopAreaPercentage),Area.Height);
                     break;
+
                 case RoadDirection.WestToEast:
-                    stopArea = new Rectangle(Position.X, Position.Y + Size.Height / 2, Size.Width/2, Size.Height);
+                    stopArea = new Rectangle(Area.X + Area.Width - (int)(Area.Height * stopAreaPercentage),Area.Y,(int)(Area.Height * stopAreaPercentage), Area.Height);
                     break;
             }
             return stopArea;
         }
 
+        //ToDo: StartPoint neu berechnen East-West++
         private Point CalculateStartPoint()
         {
             if (!LeedsToTrafficlight)
@@ -122,15 +132,13 @@ namespace Ampel__2._0.Classes.Container
                     StartPoint = new Point(Position.X, Position.Y + Size.Height / 2);
                     break;
                 case RoadDirection.EastToWest:
-                    StartPoint = new Point(Position.X - Size.Width / 2, Position.Y);
+                    StartPoint = new Point(Position.X + Size.Width / 2, Position.Y);
                     break;
                 case RoadDirection.WestToEast:
-                    StartPoint = new Point(Position.X + Size.Width / 2, Position.Y);
+                    StartPoint = new Point(Position.X - Size.Width / 2, Position.Y);
                     break;
             }
             return StartPoint;
         }
-
-        
     }
 }
