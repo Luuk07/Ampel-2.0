@@ -12,15 +12,16 @@ using System.Drawing;
 
 namespace Ampel__2._0.Classes.Container
 {
-    internal class CclContTrafficLight: CclContGeometrieBase
+    internal class CclContTrafficLight : CclContGeometrieBase
     {
         internal CclContRoad Road { get; }
         internal TrafficLightState CurrentState { get; set; }
         internal int RedLightSeconds { get; set; }
-        public CclContTrafficLight(CclContRoad road) 
+        public CclContTrafficLight(CclContRoad road)
         {
             Road = road;
             CalculateArea();
+            SetTrafficLightState();
         }
 
 
@@ -29,8 +30,8 @@ namespace Ampel__2._0.Classes.Container
             switch (Road.Direction)
             {
                 case RoadDirection.NorthToSouth:
-                    Position = new Point(Road.Position.X - Road.Size.Width/2, Road.Position.Y + Road.Size.Height/2);
-                    Size = new Size(10,10);
+                    Position = new Point(Road.Position.X - Road.Size.Width / 2, Road.Position.Y + Road.Size.Height / 2);
+                    Size = new Size(10, 10);
                     break;
                 case RoadDirection.SouthToNorth:
                     Position = new Point(Road.Position.X + Road.Size.Width / 2, Road.Position.Y - Road.Size.Height / 2);
@@ -43,6 +44,25 @@ namespace Ampel__2._0.Classes.Container
                 case RoadDirection.WestToEast:
                     Position = new Point(Road.Position.X + Road.Size.Width / 2, Road.Position.Y + Road.Size.Height / 2);
                     Size = new Size(10, 10);
+                    break;
+            }
+        }
+
+        private void SetTrafficLightState()
+        {
+            switch (Road.Direction)
+            {
+                case RoadDirection.NorthToSouth:
+                    CurrentState = TrafficLightState.Green;
+                    break;
+                case RoadDirection.SouthToNorth:
+                    CurrentState = TrafficLightState.Green;
+                    break;
+                case RoadDirection.EastToWest:
+                    CurrentState = TrafficLightState.Red;
+                    break;
+                case RoadDirection.WestToEast:
+                    CurrentState = TrafficLightState.Red;
                     break;
             }
         }

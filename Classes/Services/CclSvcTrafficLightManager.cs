@@ -29,7 +29,7 @@ namespace Ampel__2._0.Classes.Services
 
         public void HandleSimulationStep(object sender, CeaNextStepData e)
         {
-            if ((e.LastTickTime - LastTrafficLightChangeTime).TotalMilliseconds >= 20000) // Irgendwie kommt es nicht so hin
+            if ((e.LastTickTime - LastTrafficLightChangeTime).TotalMilliseconds >= 10000) // Irgendwie kommt es nicht so hin
             {
                 ChangeColorOfTrafficLight().ConfigureAwait(false);
             }

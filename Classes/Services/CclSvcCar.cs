@@ -127,10 +127,11 @@ namespace Ampel__2._0.Classes.Services
             bool blockCar = Crossroad.l_AllCars.Where(car => !ReferenceEquals(car, this)).Any(car => CheckLineArea.IntersectsWith(car.Area)); //ToDo:Funktioniert noch nicht ganz
             bool blockArea = Crossroad.Roads.SelectMany(r => r.Lanes).Any(lane => CheckLineArea.IntersectsWith(lane.StopArea));
             bool isTrafficLightRed = Lane.Road.TrafficLight.CurrentState == TrafficLightState.Red;
+            bool isTrafficLighYellow = Lane.Road.TrafficLight.CurrentState == TrafficLightState.Yellow;
 
             if (blockArea)
             {
-                if (isTrafficLightRed)
+                if (isTrafficLightRed || isTrafficLighYellow)
                 {
                     return false;
                 }
