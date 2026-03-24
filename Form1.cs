@@ -32,8 +32,16 @@ namespace Ampel__2._0
             this.Paint += Form1_PaintLanes;
             this.Paint += Form1_PaintTrafficLights;
             this.Paint += Form1_PaintCar;
+            Main.TimeFactor = timeFaktorBar.Value;
+            timeFaktorBar.ValueChanged += TimeFaktorBar_ValueChanged;
             //ToDo: Mittelpunkt des Fensters der Mainklasse geben++
         }
+
+        private void TimeFaktorBar_ValueChanged(object sender, EventArgs e)
+        {
+            Main.TimeFactor = timeFaktorBar.Value;
+        }
+
 
         private void Main_NextStep(object sender, CeaNextStepData e)
         {

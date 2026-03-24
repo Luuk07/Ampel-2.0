@@ -20,7 +20,7 @@ namespace Ampel__2._0.Classes.Services
 
         //Nicht nur Ampel, sondern auch Geschwindigkeit der Autos, Häufigkeit des Spawns++ 
         //-> Ist jetzt bei allen relevanten Werten 
-        private double TimeFactor { get; set; } = 5;
+        internal double TimeFactor { get; set; } = 2;
 
         internal event EventHandler<CeaNextStepData> NextStep;
 

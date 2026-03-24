@@ -28,13 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.timeFaktorBar = new System.Windows.Forms.TrackBar();
+            ((System.ComponentModel.ISupportInitialize)(this.timeFaktorBar)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // timeFaktorBar
+            // 
+            this.timeFaktorBar.Location = new System.Drawing.Point(840, 12);
+            this.timeFaktorBar.Minimum = 1;
+            this.timeFaktorBar.Name = "timeFaktorBar";
+            this.timeFaktorBar.Size = new System.Drawing.Size(214, 90);
+            this.timeFaktorBar.TabIndex = 0;
+            this.timeFaktorBar.Value = 2;
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1066, 794);
+            this.Controls.Add(this.timeFaktorBar);
+            this.Name = "Form1";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.timeFaktorBar)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+
+        private System.Windows.Forms.TrackBar timeFaktorBar;
     }
 }
 
