@@ -23,8 +23,9 @@ namespace Ampel__2._0.Classes.Tools
     public enum TrafficLightState
     {
         Red,
-        Yellow,
-        Green
+        YellowGreen,
+        Green,
+        YellowRed
     }
 
 

@@ -23,8 +23,10 @@ namespace Ampel__2._0.Classes.Services
         internal bool IsSpawningCar { get; set; }
         internal double SpawnChance { get; set; }
 
+        private double TimeFaktor { get; }
 
-        public CclSvcSpawnPoint(CclContLane parentLane, CclContCrossroad crossroad, CclRandom random, double spawnChance) 
+
+        public CclSvcSpawnPoint(CclContLane parentLane, CclContCrossroad crossroad, CclRandom random, double spawnChance, double timeFaktor) 
         {
             //ToDo: Wahrscheinlichkeit, dass ein Auto je Timertick erzeugt wird, als parameter übergeben++
             //ToDo: object der Randomklasse als Parameter übergeben++
@@ -35,6 +37,7 @@ namespace Ampel__2._0.Classes.Services
             Crossroad = crossroad;  
             ParentLane = parentLane;
             CarCreated = DateTime.Now;
+            TimeFaktor = timeFaktor;
         }
         public void HandleSimulationStep(object sender, CeaNextStepData e)
         {
@@ -45,9 +48,9 @@ namespace Ampel__2._0.Classes.Services
            
               if (!Crossroad.l_AllCars.Any(car => car.Area.Contains(ParentLane.StartPoint)))
               {
-                 if ((DateTime.Now - CarCreated).TotalMilliseconds >= intervall)
+                 if ((DateTime.Now - CarCreated).TotalMilliseconds * TimeFaktor >= intervall)
                  {
-                       CclSvcCar Car = new CclSvcCar(Crossroad, ParentLane);
+                       CclSvcCar Car = new CclSvcCar(Crossroad, ParentLane, TimeFaktor);
                        Crossroad.l_AllCars.Add(Car);
                        CarCreated = DateTime.Now;
                        e.Main.NextStep += Car.HandleSimulationStep;

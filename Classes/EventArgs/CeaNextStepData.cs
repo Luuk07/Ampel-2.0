@@ -10,28 +10,18 @@ namespace Ampel__2._0.Classes.EventArgs
 {
     internal class CeaNextStepData : System.EventArgs
     {
-        internal double TimeSinceLastStep { get;}       
+        internal double SimTimeSinceLastStep { get;}       
         internal bool IsTimeToChangeTrafficLight { get; }
-        internal DateTime LastTickTime { get; }
+        internal DateTime CurrentSimTime { get; }
         internal CclSvcMain Main { get; }
 
-        internal CeaNextStepData(DateTime lastTickTime, double timeSinceLastStep, CclSvcMain main)
+        internal CeaNextStepData(DateTime currentSimtTIme, double simTimeSinceLastStep, CclSvcMain main)
         {
             Main = main;
-            TimeSinceLastStep = timeSinceLastStep;
-            LastTickTime = lastTickTime;
-            //IsTimeToChangeTrafficLight = CheckIfTimeToChangeTrafficLight();
+            SimTimeSinceLastStep = simTimeSinceLastStep;
+            CurrentSimTime = currentSimtTIme;
             Main.TimeToChange ++;
         }
-
-        //internal bool CheckIfTimeToChangeTrafficLight()
-        //{
-        //    if (Main.TimeToChange >= 700) 
-        //    {
-        //        Main.TimeToChange = 0;
-        //        return true;
-        //    }
-        //    return false;
-        //}
+  
     }
 }

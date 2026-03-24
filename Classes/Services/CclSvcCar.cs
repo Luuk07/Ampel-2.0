@@ -38,17 +38,25 @@ namespace Ampel__2._0.Classes.Services
 
         internal int SpeedLimit { get { return Math.Min(MaxSpeed, Lane.Road.SpeedLimit); } }
 
-        internal int deceleration { get; set; } = 1;
+        internal int deceleration { get; set; }
 
-        internal int acceleration { get; set; } = 1;
+        internal int acceleration { get; set; }
+
+        private double TimeFaktor { get; }
 
 
-        public CclSvcCar(CclContCrossroad crossroad, CclContLane lane)
+        public CclSvcCar(CclContCrossroad crossroad, CclContLane lane, double timeFaktor)
         {
+            TimeFaktor = timeFaktor;
             Crossroad = crossroad;  
             Lane = lane;
             Size = new Size(20, 20); 
             Position = lane.StartPoint;
+            deceleration = 1 * (int)TimeFaktor;
+            acceleration = 1 * (int)TimeFaktor;
+           
+
+
         }
         // Zur Eventhandler Methode
         public void HandleSimulationStep(object sender, CeaNextStepData e)
@@ -127,7 +135,7 @@ namespace Ampel__2._0.Classes.Services
             bool blockCar = Crossroad.l_AllCars.Where(car => !ReferenceEquals(car, this)).Any(car => CheckLineArea.IntersectsWith(car.Area)); //ToDo:Funktioniert noch nicht ganz
             bool blockArea = Crossroad.Roads.SelectMany(r => r.Lanes).Any(lane => CheckLineArea.IntersectsWith(lane.StopArea));
             bool isTrafficLightRed = Lane.Road.TrafficLight.CurrentState == TrafficLightState.Red;
-            bool isTrafficLighYellow = Lane.Road.TrafficLight.CurrentState == TrafficLightState.Yellow;
+            bool isTrafficLighYellow = Lane.Road.TrafficLight.CurrentState == TrafficLightState.YellowGreen || Lane.Road.TrafficLight.CurrentState == TrafficLightState.YellowRed;
 
             if (blockArea)
             {

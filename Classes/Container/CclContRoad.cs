@@ -20,6 +20,7 @@ namespace Ampel__2._0.Classes.Container
         internal CclContCenter Center { get; }
         internal RoadDirection Direction { get; }
 
+        private double TimeFaktor { get; }
         internal int LaneCount { get; }
         internal bool HasSpawnPoint { get; }
         internal CclRandom Random { get; }
@@ -27,7 +28,7 @@ namespace Ampel__2._0.Classes.Container
         internal CclContTrafficLight TrafficLight { get; }
 
 
-        public CclContRoad(int speedLimit, CclContCrossroad crossroad, RoadDirection direction, CclContCenter center, Size windowSize, CclRandom random, int laneCount, bool hasSpawnPoint)
+        public CclContRoad(int speedLimit, CclContCrossroad crossroad, RoadDirection direction, CclContCenter center, Size windowSize, CclRandom random, int laneCount, bool hasSpawnPoint, double timeFaktor)
         {
             HasSpawnPoint = hasSpawnPoint;
             LaneCount = laneCount;
@@ -38,6 +39,7 @@ namespace Ampel__2._0.Classes.Container
             Random = random;
             WindowSize = windowSize;
             Lanes = new List<CclContLane>();
+            TimeFaktor = timeFaktor;
 
             CalculateArea(); 
             CreatLanes();
@@ -72,12 +74,12 @@ namespace Ampel__2._0.Classes.Container
             {
                 if (i == 0)
                 {
-                    CclContLane Lane = new CclContLane(HasSpawnPoint, true, this, Crossroad, Random); 
+                    CclContLane Lane = new CclContLane(HasSpawnPoint, true, this, Crossroad, Random, TimeFaktor); 
                     Lanes.Add(Lane);
                 }
                 else
                 {
-                    CclContLane Lane = new CclContLane(false, false, this, Crossroad, Random);
+                    CclContLane Lane = new CclContLane(false, false, this, Crossroad, Random, TimeFaktor);
                     Lanes.Add(Lane);
                 } 
             }

@@ -18,8 +18,9 @@ namespace Ampel__2._0.Classes.Services
         private DateTime LastTickTime;
         private DateTime CurrentSimTime { get; set; }
 
-        private double D_CurrentSimTime { get; set; }
-        private double TimeFactor { get; set; } = 2;
+        //Nicht nur Ampel, sondern auch Geschwindigkeit der Autos, Häufigkeit des Spawns++ 
+        //-> Ist jetzt bei allen relevanten Werten 
+        private double TimeFactor { get; set; } = 5;
 
         internal event EventHandler<CeaNextStepData> NextStep;
 
@@ -39,7 +40,7 @@ namespace Ampel__2._0.Classes.Services
         {
             CurrentSimTime = DateTime.Now;
 
-            Crossroad = new CclContCrossroad(size, Random);
+            Crossroad = new CclContCrossroad(size, Random, TimeFactor);
             foreach (var lane in Crossroad.Roads.SelectMany(Road => Road.LanesToCenter))
             {
                 NextStep += lane.SpawnPoint.HandleSimulationStep;      //Problem: Hier werden immer in allen Lanes die Methode aufgerufen,
@@ -63,12 +64,14 @@ namespace Ampel__2._0.Classes.Services
             _timer.Enabled = false;
             try
             {
-                double dSimTimeSinceLastTick = (DateTime.Now - LastTickTime).TotalMilliseconds * TimeFactor;
-                D_CurrentSimTime += dSimTimeSinceLastTick;
+                double   dSimTimeSinceLastTick = (DateTime.Now - LastTickTime).TotalMilliseconds * TimeFactor;
+                DateTime dtCurrentSimTime      = CurrentSimTime.AddMilliseconds(dSimTimeSinceLastTick * TimeFactor);
 
-                NextStep?.Invoke(this, new CeaNextStepData(LastTickTime ,dSimTimeSinceLastTick, this));
-                LastTickTime = DateTime.Now;
-                
+                NextStep?.Invoke(this, new CeaNextStepData(dtCurrentSimTime, dSimTimeSinceLastTick, this));
+                //NextStep?.Invoke(this, new CeaNextStepData(LastTickTime ,dSimTimeSinceLastTick, this));
+
+                LastTickTime   = DateTime.Now;
+                CurrentSimTime = dtCurrentSimTime;
             }
             finally
             {

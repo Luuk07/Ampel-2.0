@@ -19,13 +19,16 @@ namespace Ampel__2._0.Classes.Container
         public List<CclSvcCar> l_AllCars { get; set; } = new List<CclSvcCar>();
         public CclRandom Random { get; }
         public CclSvcTrafficLightManager TrafficLightManager { get; set; }
-        public CclContCrossroad(Size windowSize, CclRandom random)
+
+        private double TimeFaktor { get; }
+        public CclContCrossroad(Size windowSize, CclRandom random, double timeFaktor)
         {
             WindowSize = windowSize;
             Random = random;
             Center = new CclContCenter(windowSize);
             TrafficLightManager = new CclSvcTrafficLightManager(this);
             Center.CreatArea(2, 2);
+            TimeFaktor = timeFaktor;
             CreatRoads();
         }
         public void CreatRoads()
@@ -36,16 +39,16 @@ namespace Ampel__2._0.Classes.Container
                 switch (i)
                 {
                     case 1:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.SouthToNorth,Center, WindowSize, Random, 2, true);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.SouthToNorth,Center, WindowSize, Random, 2, true, TimeFaktor);
                         break;
                     case 2:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.WestToEast, Center, WindowSize, Random, 2, false);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.WestToEast, Center, WindowSize, Random, 2, false, TimeFaktor);
                         break;
                     case 3:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.NorthToSouth, Center, WindowSize, Random, 2, false);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.NorthToSouth, Center, WindowSize, Random, 2, false, TimeFaktor);
                         break;
                     case 4:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.EastToWest, Center, WindowSize, Random, 2, false);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.EastToWest, Center, WindowSize, Random, 2, false, TimeFaktor);
                         break;
                     default:
                         Road = null;

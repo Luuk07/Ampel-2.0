@@ -174,7 +174,7 @@ namespace Ampel__2._0
             foreach (var light in Main.Crossroad.Roads.Select(r => r.TrafficLight))
             {
                 Rectangle rect = light.Area;
-                using (Brush brush = new SolidBrush(light.CurrentState == Classes.Tools.TrafficLightState.Green ? Color.Green : light.CurrentState == Classes.Tools.TrafficLightState.Yellow ? Color.Yellow : Color.Red))
+                using (Brush brush = new SolidBrush(light.CurrentState == Classes.Tools.TrafficLightState.Green ? Color.Green : light.CurrentState == Classes.Tools.TrafficLightState.YellowGreen || light.CurrentState == Classes.Tools.TrafficLightState.YellowRed ? Color.Yellow : Color.Red))
                 {
                     g.FillRectangle(brush, rect);
                 }

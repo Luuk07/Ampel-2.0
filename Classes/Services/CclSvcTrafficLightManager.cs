@@ -12,84 +12,165 @@ namespace Ampel__2._0.Classes.Services
     internal class CclSvcTrafficLightManager
     {
         internal DateTime LastTrafficLightChangeTime { get; set; } 
+        private DateTime NextPhaseChangeTime { get; set; }
+
+        private int currentPhase= 1;
         internal CclContCrossroad Crossroad { get; }
         internal List<CclContTrafficLight> TrafficLights { get { return Crossroad.Roads.Select(clRoad => clRoad.TrafficLight).ToList(); } }
 
-        private int isTransitioning = 0;
-
-        private int yellowLightMilliSeconds = 3000;
 
         public CclSvcTrafficLightManager(CclContCrossroad crossroad)
         {
             //ToDo: Ampelschaltung aus alter version nehmen und Autos sollen nur halten, wenn Ampel rot ist
             //-> danach mehrere Gelb Stati hinzufügen.
-            LastTrafficLightChangeTime = DateTime.Now;
+            
             Crossroad = crossroad;
         }
 
+        // ToDo: Gelbphase nacheinander schalten, wer muss mit wem kommunizieren, wenn eine Richtung Gelb ist, muss die Andere Rot sein. ++
+
         public void HandleSimulationStep(object sender, CeaNextStepData e)
-        {
-            if ((e.LastTickTime - LastTrafficLightChangeTime).TotalMilliseconds >= 10000) // Irgendwie kommt es nicht so hin
-            {
-                ChangeColorOfTrafficLight().ConfigureAwait(false);
-            }
+        {                                                                         
+          if (e.CurrentSimTime >= NextPhaseChangeTime) 
+          {
+             
+             SetNextTrafficLightState();
+             CalculateNextStateChangeTime(e, e.CurrentSimTime, currentPhase);
+             
+               
+             //TODO: Zeitpunkt in Simulationszeit für den nächstten Phasenwechsel berechnen. NextStateChangeTime = CalculateNextStateChangeTime();
+          }
+
         }
-      
-        //ToDo: Uhrzeit des letzten Phasenwechsels merken und von der Simulationzeit abziehen, wenn genug Zeit vergnangen ist, dann Ampelphase ändern
-        public async Task ChangeColorOfTrafficLight()
+
+  
+        private void CalculateNextStateChangeTime(CeaNextStepData e, DateTime dtCurrentSimTime, int phase)
         {
-            if (System.Threading.Interlocked.Exchange(ref isTransitioning, 1) == 1)
+            double phaseDurarion;
+            switch (phase)
             {
-                return;
+                case 1:
+                    phaseDurarion = 10;
+                    break;
+                case 2:
+                    phaseDurarion = 20;
+                    break;
+                case 3:
+                    phaseDurarion = 30;
+                    break;
+                case 4:
+                    phaseDurarion = 40;
+                    break;
+                case 5:
+                    phaseDurarion = 50;
+                    break;
+                case 6:
+                    phaseDurarion = 60;
+                    break;
+                default:
+                    throw new IndexOutOfRangeException("Unknown phase: " + phase);
             }
-            try
-            {
-                // Snapshot previous states
-                var previous = TrafficLights.ToDictionary(l => l, l => l.CurrentState);
 
-                // All traffic lights to Yellow
-                foreach (var l in TrafficLights)
-                {
-                    SetState(l, TrafficLightState.Yellow);
-                }
-
-                // Duration of yellow light
-                await Task.Delay((int)yellowLightMilliSeconds).ConfigureAwait(false);
-
-                // Set new states based on previous
-                foreach (var l in TrafficLights)
-                {
-                    var prev = previous[l];
-
-                    if (prev == TrafficLightState.Green)
-                    {
-                        SetState(l, TrafficLightState.Red);
-                    }
-                    else if (prev == TrafficLightState.Red)
-                    {
-                        SetState(l, TrafficLightState.Green);
-                    }
-                    else
-                    {
-                        // Here we choose Red as a safe default
-                        SetState(l, TrafficLightState.Red);
-                    }
-                }
-            }
-            finally
-            {
-                // Reset transitioning flag, so its possible to call the method again
-                System.Threading.Interlocked.Exchange(ref isTransitioning, 0);
-                LastTrafficLightChangeTime = DateTime.Now;
-            }
+            NextPhaseChangeTime = dtCurrentSimTime.AddSeconds(phaseDurarion);
+    
         }
-        private void SetState(CclContTrafficLight light, TrafficLightState newState)
+
+       
+
+        private void SetNextTrafficLightState()
         {
-            if (light.CurrentState != newState)
+            //foreach (var l in TrafficLights)
+            //{
+            //    switch (l.CurrentState)
+            //    {
+            //        case TrafficLightState.Green:
+            //            l.CurrentState = TrafficLightState.YellowRed;
+            //            break;
+            //        case TrafficLightState.YellowRed:
+            //            l.CurrentState = TrafficLightState.Red;
+            //            break;
+            //        case TrafficLightState.Red:
+            //            l.CurrentState = TrafficLightState.YellowGreen;
+            //            break;
+            //        case TrafficLightState.YellowGreen:
+            //            l.CurrentState = TrafficLightState.Green;
+            //            break;
+            //        default:
+            //            throw new IndexOutOfRangeException("Unknown TrafficLightState: " + l.CurrentState);
+            //    }
+            //}
+
+
+            var ou = TrafficLights.Where(tl => tl.Road.Direction == RoadDirection.NorthToSouth ||
+                                   tl.Road.Direction == RoadDirection.SouthToNorth).ToList();
+
+
+            var lr = TrafficLights.Where(tl => tl.Road.Direction == RoadDirection.EastToWest ||
+                                    tl.Road.Direction == RoadDirection.WestToEast).ToList();
+
+
+
+            // Es gibt 6 Phasen und für jede Phase gibt es eine klare Bedingung
+
+            // 1. OU Grün | LR Rot  --> OU Gelb | LR Rot
+            if (ou[0].CurrentState == TrafficLightState.Green && lr[0].CurrentState == TrafficLightState.Red)
             {
-                light.CurrentState = newState;
-                //StateChanged?.Invoke(this, System.EventArgs.Empty);
+                SetGroupState(ou, TrafficLightState.YellowRed);
+                currentPhase = 1;
             }
+            // 2. OU Gelb | LR Rot  --> OU Rot | LR Rot+Gelb
+            else if (ou[0].CurrentState == TrafficLightState.YellowRed && lr[0].CurrentState == TrafficLightState.Red)
+            {
+                SetGroupState(ou, TrafficLightState.Red);
+                SetGroupState(lr, TrafficLightState.YellowGreen);
+                currentPhase = 2;
+            }
+            // 3. OU Rot | LR Rot+Gelb --> OU Rot | LR Grün
+            else if (ou[0].CurrentState == TrafficLightState.Red && lr[0].CurrentState == TrafficLightState.YellowGreen)
+            {
+                SetGroupState(lr, TrafficLightState.Green);
+                currentPhase = 3;
+            }
+            // 4. OU Rot | LR Grün --> OU Rot | LR Gelb
+            else if (ou[0].CurrentState == TrafficLightState.Red && lr[0].CurrentState == TrafficLightState.Green)
+            {
+                SetGroupState(lr, TrafficLightState.YellowRed);
+                currentPhase = 4;
+            }
+            // 5. OU Rot | LR Gelb --> OU Rot+Gelb | LR Rot
+            else if (ou[0].CurrentState == TrafficLightState.Red && lr[0].CurrentState == TrafficLightState.YellowRed)
+            {
+                SetGroupState(ou, TrafficLightState.YellowGreen);
+                SetGroupState(lr, TrafficLightState.Red);
+                currentPhase = 5;
+            }
+            // 6. OU Rot+Gelb | LR Rot --> OU Grün | LR Rot
+            else if (ou[0].CurrentState == TrafficLightState.YellowGreen && lr[0].CurrentState == TrafficLightState.Red)
+            {
+                SetGroupState(ou, TrafficLightState.Green);
+                currentPhase = 6;
+            }
+            //Default
+            else
+            {
+                SetGroupState(ou, TrafficLightState.Green);
+                SetGroupState(lr, TrafficLightState.Red);
+            }
+          
         }
-    }
+
+       private void SetGroupState(List<CclContTrafficLight> group, TrafficLightState newState)
+       {
+           foreach (var l in group)
+           {
+               l.CurrentState = newState;
+           }
+       }
+
+
+
+
+
+    
+}
 }

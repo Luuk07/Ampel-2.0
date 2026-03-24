@@ -19,10 +19,13 @@ namespace Ampel__2._0.Classes.Container
         internal bool LeedsToTrafficlight { get { return SpawnPoint != null; } }
         internal List<CclSvcCar> l_carsInLane { get; } = new List<CclSvcCar>();
         internal double SpawnChance { get; set; }
-        public CclContLane(bool createSpawnPoint, bool leedsToTrafficLight, CclContRoad road, CclContCrossroad crossroad, CclRandom random)
+
+        private double TimeFaktor { get; }
+        public CclContLane(bool createSpawnPoint, bool leedsToTrafficLight, CclContRoad road, CclContCrossroad crossroad, CclRandom random, double timeFaktor)
         {
             //LeedsToTrafficlight = leedsToTrafficLight;
             Road = road;
+            TimeFaktor = timeFaktor;
 
             //ToDo: Es sollen nicht zwei Autos gleichzeitig spawnen können
 
@@ -35,22 +38,22 @@ namespace Ampel__2._0.Classes.Container
                     case RoadDirection.NorthToSouth:
                         Size = new Size(CstConstants.C_iLaneWidth, Road.Size.Height);
                         Position = new Point(Road.Position.X - CstConstants.C_iLaneWidth/2, Road.Position.Y);
-                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance, TimeFaktor);
                         break;
                     case RoadDirection.SouthToNorth:
                         Size = new Size(CstConstants.C_iLaneWidth, Road.Size.Height);
                         Position = new Point(Road.Position.X + CstConstants.C_iLaneWidth / 2, Road.Position.Y);
-                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance, TimeFaktor);
                         break;
                     case RoadDirection.EastToWest:
                         Size = new Size(Road.Size.Width, CstConstants.C_iLaneWidth);
                         Position = new Point(Road.Position.X, Road.Position.Y - CstConstants.C_iLaneWidth / 2);
-                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance, TimeFaktor);
                         break;
                     case RoadDirection.WestToEast:
                         Size = new Size(Road.Size.Width, CstConstants.C_iLaneWidth);
                         Position = new Point(Road.Position.X, Road.Position.Y + CstConstants.C_iLaneWidth / 2);
-                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance, TimeFaktor);
                         break;
                 }
                 StopArea = CalculateStopArea();
