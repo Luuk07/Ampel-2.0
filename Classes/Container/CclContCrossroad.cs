@@ -20,14 +20,15 @@ namespace Ampel__2._0.Classes.Container
         public CclRandom Random { get; }
         public CclSvcTrafficLightManager TrafficLightManager { get; set; }
 
-        private double TimeFaktor { get; }
-        public CclContCrossroad(Size windowSize, CclRandom random, double timeFaktor)
+        private int TimeFaktor { get; }
+        public CclContCrossroad(Size windowSize, CclRandom random, int timeFaktor)
         {
             WindowSize = windowSize;
             Random = random;
             Center = new CclContCenter(windowSize);
             TrafficLightManager = new CclSvcTrafficLightManager(this);
             Center.CreatArea(2, 2);
+            Center.CalculateCurve();
             TimeFaktor = timeFaktor;
             CreatRoads();
         }

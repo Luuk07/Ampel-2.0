@@ -14,7 +14,7 @@ namespace Ampel__2._0.Classes.Services
         internal DateTime LastTrafficLightChangeTime { get; set; } 
         private DateTime NextPhaseChangeTime { get; set; }
 
-        private int currentPhase= 1;
+        private int currentPhase = 1;
         internal CclContCrossroad Crossroad { get; }
         internal List<CclContTrafficLight> TrafficLights { get { return Crossroad.Roads.Select(clRoad => clRoad.TrafficLight).ToList(); } }
 
@@ -27,8 +27,6 @@ namespace Ampel__2._0.Classes.Services
             Crossroad = crossroad;
         }
 
-        // ToDo: Gelbphase nacheinander schalten, wer muss mit wem kommunizieren, wenn eine Richtung Gelb ist, muss die Andere Rot sein. ++
-
         public void HandleSimulationStep(object sender, CeaNextStepData e)
         {                                                                         
           if (e.CurrentSimTime >= NextPhaseChangeTime) 
@@ -38,7 +36,7 @@ namespace Ampel__2._0.Classes.Services
              CalculateNextStateChangeTime(e, e.CurrentSimTime, currentPhase);
              
                
-             //TODO: Zeitpunkt in Simulationszeit für den nächstten Phasenwechsel berechnen. NextStateChangeTime = CalculateNextStateChangeTime();
+             //TODO: Zeitpunkt in Simulationszeit für den nächsten Phasenwechsel berechnen. NextStateChangeTime = CalculateNextStateChangeTime();
           }
 
         }
@@ -166,10 +164,6 @@ namespace Ampel__2._0.Classes.Services
                l.CurrentState = newState;
            }
        }
-
-
-
-
 
     
 }

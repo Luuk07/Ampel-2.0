@@ -20,8 +20,8 @@ namespace Ampel__2._0.Classes.Container
         internal List<CclSvcCar> l_carsInLane { get; } = new List<CclSvcCar>();
         internal double SpawnChance { get; set; }
 
-        private double TimeFaktor { get; }
-        public CclContLane(bool createSpawnPoint, bool leedsToTrafficLight, CclContRoad road, CclContCrossroad crossroad, CclRandom random, double timeFaktor)
+        private int TimeFaktor { get; }
+        public CclContLane(bool createSpawnPoint, bool leedsToTrafficLight, CclContRoad road, CclContCrossroad crossroad, CclRandom random, int timeFaktor)
         {
             //LeedsToTrafficlight = leedsToTrafficLight;
             Road = road;
@@ -96,8 +96,6 @@ namespace Ampel__2._0.Classes.Container
 
             switch (Road.Direction)
             {
-                //ToDo: Die Stopping Area anhand der Lane Area berechnen
-
                 case RoadDirection.NorthToSouth:
                     stopArea = new Rectangle(Area.X, Area.Y + Area.Height - (int)(Area.Height * stopAreaPercentage), Area.Width, (int)(Area.Height * stopAreaPercentage));
                     break;
@@ -117,7 +115,7 @@ namespace Ampel__2._0.Classes.Container
             return stopArea;
         }
 
-        //ToDo: StartPoint neu berechnen East-West++
+     
         private Point CalculateStartPoint()
         {
             if (!LeedsToTrafficlight)

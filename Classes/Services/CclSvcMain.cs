@@ -20,13 +20,11 @@ namespace Ampel__2._0.Classes.Services
 
         //Nicht nur Ampel, sondern auch Geschwindigkeit der Autos, Häufigkeit des Spawns++ 
         //-> Ist jetzt bei allen relevanten Werten 
-        internal double TimeFactor { get; set; } = 2;
+        internal int TimeFactor { get; set; } = 2;
 
         internal event EventHandler<CeaNextStepData> NextStep;
 
         private static System.Timers.Timer _timer;
-
-        private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
 
         private int intervalTimer = 10;
 
@@ -41,6 +39,7 @@ namespace Ampel__2._0.Classes.Services
             CurrentSimTime = DateTime.Now;
 
             Crossroad = new CclContCrossroad(size, Random, TimeFactor);
+            NextStep += Crossroad.TrafficLightManager.HandleSimulationStep;
             foreach (var lane in Crossroad.Roads.SelectMany(Road => Road.LanesToCenter))
             {
                 NextStep += lane.SpawnPoint.HandleSimulationStep;      //Problem: Hier werden immer in allen Lanes die Methode aufgerufen,

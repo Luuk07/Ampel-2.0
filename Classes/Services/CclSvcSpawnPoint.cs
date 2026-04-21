@@ -23,14 +23,11 @@ namespace Ampel__2._0.Classes.Services
         internal bool IsSpawningCar { get; set; }
         internal double SpawnChance { get; set; }
 
-        private double TimeFaktor { get; }
+        private int TimeFaktor { get; }
 
 
-        public CclSvcSpawnPoint(CclContLane parentLane, CclContCrossroad crossroad, CclRandom random, double spawnChance, double timeFaktor) 
+        public CclSvcSpawnPoint(CclContLane parentLane, CclContCrossroad crossroad, CclRandom random, double spawnChance, int timeFaktor) 
         {
-            //ToDo: Wahrscheinlichkeit, dass ein Auto je Timertick erzeugt wird, als parameter übergeben++
-            //ToDo: object der Randomklasse als Parameter übergeben++
-            //ToDo: 3 Lanes bekommen wahrscheinlichkeit von 0 die andere von ca 20 prozent++
 
             SpawnChance = spawnChance;
             LanePosition = parentLane.Position;
@@ -42,8 +39,8 @@ namespace Ampel__2._0.Classes.Services
         public void HandleSimulationStep(object sender, CeaNextStepData e)
         {
           
-           IsSpawningCar = CclRandom.Random.NextDouble() < SpawnChance;
-           //ToDo: Mithilfe des Random Objektes bestimmen ob ein Auto erzeugt werden soll oder nicht, abhängig von der übergebenen Wahrscheinlichkeit++
+              IsSpawningCar = CclRandom.Random.NextDouble() < SpawnChance;
+             
 
            
               if (!Crossroad.l_AllCars.Any(car => car.Area.Contains(ParentLane.StartPoint)))
@@ -56,9 +53,6 @@ namespace Ampel__2._0.Classes.Services
                        e.Main.NextStep += Car.HandleSimulationStep;
                  }
               }
-
-            // Bin mir nicht sicher, ob hier der richtige Ort ist, um die Methode aufzurufen
-            e.Main.NextStep += Crossroad.TrafficLightManager.HandleSimulationStep;
 
         }
     }

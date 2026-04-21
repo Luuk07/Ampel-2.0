@@ -32,6 +32,8 @@ namespace Ampel__2._0
             this.Paint += Form1_PaintLanes;
             this.Paint += Form1_PaintTrafficLights;
             this.Paint += Form1_PaintCar;
+            this.Paint += Form1_PaintPoints;
+
             Main.TimeFactor = timeFaktorBar.Value;
             timeFaktorBar.ValueChanged += TimeFaktorBar_ValueChanged;
             //ToDo: Mittelpunkt des Fensters der Mainklasse geben++
@@ -186,6 +188,22 @@ namespace Ampel__2._0
                 {
                     g.FillRectangle(brush, rect);
                 }
+            }
+        }
+
+        public void Form1_PaintPoints(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            //foreach (var point in Main.Crossroad.Center.South)
+            //{
+            //}
+            //using (Brush brush = new SolidBrush(Color.Purple))
+            //{
+            //   g.FillPolygon(brush, Main.Crossroad.Center.South.ToArray());
+            //}
+            using (Brush brush = new SolidBrush(Color.Purple))
+            {
+                g.FillClosedCurve(brush, Main.Crossroad.Center.South.ToArray());
             }
         }
     }

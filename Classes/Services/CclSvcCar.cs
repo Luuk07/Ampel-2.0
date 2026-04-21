@@ -18,6 +18,8 @@ namespace Ampel__2._0.Classes.Services
         //ToDo: Einen Ereignishändlermethode analog zum Spawnpoint erzeugen, welcher auf das NextStep erreignis reagiert ++
         internal int CurrentSpeed { get; private set; } = 0;
 
+        private int turningIndex = 0;
+
         internal int BreakingDistance { get; set; }
 
         internal int PufferDistance { get; set; } = 15;
@@ -30,9 +32,11 @@ namespace Ampel__2._0.Classes.Services
         
         internal CclContLane Lane { get; set; } 
                                                                                                                                                      
-        internal bool InCenter { get { return Area.Contains(Crossroad.Center.Position); } }
-                                                                                            
-        internal CarDirection Direction { get; set; } = CarDirection.Straight; 
+        //internal bool InCenter { get { return Area.Contains(Crossroad.Center.Position); } }
+
+        internal bool InCenter { get { return Crossroad.Center.Area.Contains(Position); } }
+
+        internal CarDirection Direction { get; set; }
 
         private CclContCrossroad Crossroad { get; set; }
 
@@ -42,11 +46,14 @@ namespace Ampel__2._0.Classes.Services
 
         internal int acceleration { get; set; }
 
-        private double TimeFaktor { get; }
+        private int TimeFaktor { get; }
+
+        private int ActualSpeed { get { return CurrentSpeed * TimeFaktor; } }
 
 
-        public CclSvcCar(CclContCrossroad crossroad, CclContLane lane, double timeFaktor)
+        public CclSvcCar(CclContCrossroad crossroad, CclContLane lane, int timeFaktor)
         {
+            Direction = (CarDirection)CclRandom.Random.Next(0, 3);
             TimeFaktor = timeFaktor;
             Crossroad = crossroad;  
             Lane = lane;
@@ -54,14 +61,18 @@ namespace Ampel__2._0.Classes.Services
             Position = lane.StartPoint;
             deceleration = 1 * (int)TimeFaktor;
             acceleration = 1 * (int)TimeFaktor;
-           
-
-
         }
-        // Zur Eventhandler Methode
+  
         public void HandleSimulationStep(object sender, CeaNextStepData e)
-        {
-            MoveBasedOnLane(); 
+        {  
+            if (Direction == CarDirection.Right && InCenter)
+            {
+                TurnRight();
+            }
+            else
+            {
+                MoveBasedOnLane();
+            }
         }
         private void MoveBasedOnLane()
         {
@@ -79,22 +90,22 @@ namespace Ampel__2._0.Classes.Services
                 {
                     CurrentSpeed -= deceleration;
                 }
+            }      
+            switch (Lane.Road.Direction)
+            {
+                case RoadDirection.NorthToSouth:
+                    Position = new Point(Position.X, Position.Y + ActualSpeed);
+                    break;
+                case RoadDirection.SouthToNorth:
+                    Position = new Point(Position.X, Position.Y - ActualSpeed);
+                    break;
+                case RoadDirection.WestToEast:
+                    Position = new Point(Position.X + ActualSpeed, Position.Y);
+                    break;
+                case RoadDirection.EastToWest:
+                    Position = new Point(Position.X - ActualSpeed, Position.Y);
+                    break;
             }
-                switch (Lane.Road.Direction)
-                {
-                    case RoadDirection.NorthToSouth:
-                        Position = new Point(Position.X, Position.Y + CurrentSpeed);
-                        break;
-                    case RoadDirection.SouthToNorth:
-                        Position = new Point(Position.X, Position.Y - CurrentSpeed);
-                        break;
-                    case RoadDirection.WestToEast:
-                        Position = new Point(Position.X + CurrentSpeed, Position.Y);
-                        break;
-                    case RoadDirection.EastToWest:
-                        Position = new Point(Position.X - CurrentSpeed, Position.Y);
-                        break;
-                }
         }
 
 
@@ -102,7 +113,7 @@ namespace Ampel__2._0.Classes.Services
         {
             //ToDo: Entscheidet, ob das Auto beschleunigen oder verzögern soll+
             //ToDo: Bremsweg wird anhand von currentSpeed und deceleration berechnet+
-            BreakingDistance = (CurrentSpeed * CurrentSpeed) / (2 * deceleration);
+            BreakingDistance = (ActualSpeed * ActualSpeed) / (2 * deceleration);
 
             CheckLineArea = new Rectangle();
 
@@ -152,6 +163,25 @@ namespace Ampel__2._0.Classes.Services
             {
                 return true;
             }
+        }
+
+        public void TurnRight()
+        {
+            //if (turningIndex <= Crossroad.Center.South.Count)
+            //{
+            //    Position = Crossroad.Center.South[turningIndex];
+            //    turningIndex++;
+            //}
+
+            // Funktioniert, ist aber nicht so gut, weil der sich zur letzten position hinteleportiert, besser wäre, wenn er sich merken würde wo er aufgehört hat
+            foreach (var position in Crossroad.Center.South)
+            {
+                Position = position;
+            }
+
+            //Lane wird übergeben und nicht ermittelt, auch nicht perfekt
+            Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+            
         }
 
  

@@ -9,8 +9,8 @@ namespace Ampel__2._0.Classes.Tools
     public enum CarDirection
     {
         Right,
-        Left,
         Straight,
+        Left,
     }
 
     public enum RoadDirection
