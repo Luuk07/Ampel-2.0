@@ -20,6 +20,8 @@ namespace Ampel__2._0.Classes.Services
 
         private int turningIndex = 0;
 
+        private Queue<Point> _southQueue; // Ist wie eine Liste, allerdings wird das elementnach dem benutzen gelöscht
+
         internal int BreakingDistance { get; set; }
 
         internal int PufferDistance { get; set; } = 15;
@@ -34,7 +36,7 @@ namespace Ampel__2._0.Classes.Services
                                                                                                                                                      
         //internal bool InCenter { get { return Area.Contains(Crossroad.Center.Position); } }
 
-        internal bool InCenter { get { return Crossroad.Center.Area.Contains(Position); } }
+        internal bool InCenter { get { return Crossroad.Center.Area.IntersectsWith(Area); } }
 
         internal CarDirection Direction { get; set; }
 
@@ -61,13 +63,20 @@ namespace Ampel__2._0.Classes.Services
             Position = lane.StartPoint;
             deceleration = 1 * (int)TimeFaktor;
             acceleration = 1 * (int)TimeFaktor;
+            _southQueue = new Queue<Point>(Crossroad.Center.South);
         }
   
         public void HandleSimulationStep(object sender, CeaNextStepData e)
         {  
+            // Problem: er ist zu früh nicht mehr im Center und geht in den else Block
             if (Direction == CarDirection.Right && InCenter)
             {
                 TurnRight();
+                //if (_southQueue.Count <= 4)
+                //{
+                    //Lane wird übergeben und nicht ermittelt, diese option ist auch nicht perfekt   
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+                //}
             }
             else
             {
@@ -78,7 +87,6 @@ namespace Ampel__2._0.Classes.Services
         {
             if (CheckCarCanDrive())
             {
-                //ToDo: Basierend auf dem ob das Auto bremsen muss oder beschleunigen kann die geschwindigkeit anpassen+
                 if(CurrentSpeed < SpeedLimit)
                 {
                     CurrentSpeed += acceleration;   
@@ -111,8 +119,6 @@ namespace Ampel__2._0.Classes.Services
 
         private bool CheckCarCanDrive()
         {
-            //ToDo: Entscheidet, ob das Auto beschleunigen oder verzögern soll+
-            //ToDo: Bremsweg wird anhand von currentSpeed und deceleration berechnet+
             BreakingDistance = (ActualSpeed * ActualSpeed) / (2 * deceleration);
 
             CheckLineArea = new Rectangle();
@@ -174,17 +180,29 @@ namespace Ampel__2._0.Classes.Services
             //}
 
             // Funktioniert, ist aber nicht so gut, weil der sich zur letzten position hinteleportiert, besser wäre, wenn er sich merken würde wo er aufgehört hat
-            foreach (var position in Crossroad.Center.South)
+            //foreach (var position in Crossroad.Center.South)
+            //{
+            //    Position = position;
+            //}
+            //Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+
+
+
+
+            // Biegt immernoch blitzartig ab, wahrscheinlich, weil er zu früh ausm Center ist
+            // Er geht hier nur einmal rein und nicht die 12 Punkte lang -> weil die lane schon übergeben wurde
+
+            if (_southQueue == null||_southQueue.Count == 0 || !InCenter)
             {
-                Position = position;
+                Direction = CarDirection.Straight;
+                Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+                return;
             }
 
-            //Lane wird übergeben und nicht ermittelt, auch nicht perfekt
-            Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
-            
-        }
+            Position = _southQueue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
 
- 
+
+        }
 
 
 
