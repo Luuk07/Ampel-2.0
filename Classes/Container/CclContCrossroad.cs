@@ -43,7 +43,7 @@ namespace Ampel__2._0.Classes.Container
                         Road = new CclContRoad(50, this, Tools.RoadDirection.SouthToNorth,Center, WindowSize, Random, 2, true, TimeFaktor);
                         break;
                     case 2:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.WestToEast, Center, WindowSize, Random, 2, false, TimeFaktor);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.WestToEast, Center, WindowSize, Random, 2, true, TimeFaktor);
                         break;
                     case 3:
                         Road = new CclContRoad(50, this, Tools.RoadDirection.NorthToSouth, Center, WindowSize, Random, 2, true, TimeFaktor);

@@ -223,7 +223,7 @@ namespace Ampel__2._0.Classes.Services
                     }
 
                     Position = westQueue.Dequeue();
-                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.NorthToSouth);
                     break;
                 case CarSpawnPoint.South:
                     if (southQueue == null || southQueue.Count == 0 || !InCenter)

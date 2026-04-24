@@ -205,7 +205,7 @@ namespace Ampel__2._0
             {
                 g.FillClosedCurve(brush, Main.Crossroad.Center.South.ToArray());
                 g.FillClosedCurve(brush, Main.Crossroad.Center.East.ToArray());
-                //g.FillClosedCurve(brush, Main.Crossroad.Center.West.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.West.ToArray());
                 g.FillClosedCurve(brush, Main.Crossroad.Center.North.ToArray());
             }
         }
