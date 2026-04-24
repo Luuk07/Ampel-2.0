@@ -26,6 +26,8 @@ namespace Ampel__2._0.Classes.Services
 
         private Queue<Point> northQueue;
 
+        private Queue<Point> westQueue;
+
         internal int BreakingDistance { get; set; }
 
         internal int PufferDistance { get; set; } = 15;
@@ -34,7 +36,7 @@ namespace Ampel__2._0.Classes.Services
 
         internal Rectangle CheckLineArea;
 
-        internal int MaxSpeed { get; set; } = 8;
+        internal int MaxSpeed { get; set; } = 4;
         
         internal CclContLane Lane { get; set; } 
                                                                                                                                                      
@@ -70,6 +72,7 @@ namespace Ampel__2._0.Classes.Services
             southQueue = new Queue<Point>(Crossroad.Center.South);
             eastQueue = new Queue<Point>(Crossroad.Center.East);
             northQueue = new Queue<Point>(Crossroad.Center.North);
+            westQueue = new Queue<Point>(Crossroad.Center.West);
 
             // Ist dafür, um zu gucken, wo das Auto gestartet ist, damit die Abbiegung besser funktioniert
             switch (Lane.Road.Direction)
@@ -193,15 +196,12 @@ namespace Ampel__2._0.Classes.Services
         public void TurnRight()
         {
 
-
             // Funktioniert, ist aber nicht so gut, weil der sich zur letzten position hinteleportiert, besser wäre, wenn er sich merken würde wo er aufgehört hat
             //foreach (var position in Crossroad.Center.South)
             //{
             //    Position = position;
             //}
             //Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
-
-
 
             switch (spawnPoint)
             {
@@ -216,18 +216,23 @@ namespace Ampel__2._0.Classes.Services
                     Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.EastToWest);
 
                     break;
+                case CarSpawnPoint.West:
+                    if (westQueue == null || westQueue.Count == 0 || !InCenter)
+                    {
+                        return;
+                    }
+
+                    Position = westQueue.Dequeue();
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+                    break;
                 case CarSpawnPoint.South:
                     if (southQueue == null || southQueue.Count == 0 || !InCenter)
                     {
                         return;
                     }
 
-                    Position = southQueue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
-                    //Lane wird übergeben und nicht ermittelt, diese option ist auch nicht perfekt  
+                    Position = southQueue.Dequeue();
                     Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
-                    break;
-                case CarSpawnPoint.West:
-
                     break;
                 case CarSpawnPoint.East:
                     if (eastQueue == null || eastQueue.Count == 0 || !InCenter)
@@ -235,14 +240,12 @@ namespace Ampel__2._0.Classes.Services
                         return;
                     }
 
-                    Position = eastQueue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
+                    Position = eastQueue.Dequeue(); 
                     Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.SouthToNorth);
                     break;
             }
 
         }
-
-
 
     }
 }
