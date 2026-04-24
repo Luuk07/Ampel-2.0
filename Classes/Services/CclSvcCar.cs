@@ -18,9 +18,11 @@ namespace Ampel__2._0.Classes.Services
         //ToDo: Einen Ereignishändlermethode analog zum Spawnpoint erzeugen, welcher auf das NextStep erreignis reagiert ++
         internal int CurrentSpeed { get; private set; } = 0;
 
-        private int turningIndex = 0;
+        private CarSpawnPoint spawnPoint; 
 
-        private Queue<Point> _southQueue; // Ist wie eine Liste, allerdings wird das elementnach dem benutzen gelöscht
+        private Queue<Point> southQueue; // Ist wie eine Warteschlange, erstes Element was drin ist wird als erstes genommen und gelöscht (mit der Methode Dequeue())
+
+        private Queue<Point> eastQueue;
 
         internal int BreakingDistance { get; set; }
 
@@ -63,7 +65,25 @@ namespace Ampel__2._0.Classes.Services
             Position = lane.StartPoint;
             deceleration = 1 * (int)TimeFaktor;
             acceleration = 1 * (int)TimeFaktor;
-            _southQueue = new Queue<Point>(Crossroad.Center.South);
+            southQueue = new Queue<Point>(Crossroad.Center.South);
+            eastQueue = new Queue<Point>(Crossroad.Center.East);
+
+            // Ist dafür, um zu gucken, wo das Auto gestartet ist, damit die Abbiegung besser funktioniert
+            switch (Lane.Road.Direction)
+            {
+                case RoadDirection.NorthToSouth:
+                    spawnPoint = CarSpawnPoint.North;
+                    break;
+                case RoadDirection.SouthToNorth:
+                    spawnPoint = CarSpawnPoint.South;
+                    break;
+                case RoadDirection.WestToEast:
+                    spawnPoint = CarSpawnPoint.West;
+                    break;
+                case RoadDirection.EastToWest:
+                    spawnPoint = CarSpawnPoint.East;
+                    break;
+            }
         }
   
         public void HandleSimulationStep(object sender, CeaNextStepData e)
@@ -72,11 +92,7 @@ namespace Ampel__2._0.Classes.Services
             if (Direction == CarDirection.Right && InCenter)
             {
                 TurnRight();
-                //if (_southQueue.Count <= 4)
-                //{
-                    //Lane wird übergeben und nicht ermittelt, diese option ist auch nicht perfekt   
-                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
-                //}
+
             }
             else
             {
@@ -173,11 +189,7 @@ namespace Ampel__2._0.Classes.Services
 
         public void TurnRight()
         {
-            //if (turningIndex <= Crossroad.Center.South.Count)
-            //{
-            //    Position = Crossroad.Center.South[turningIndex];
-            //    turningIndex++;
-            //}
+
 
             // Funktioniert, ist aber nicht so gut, weil der sich zur letzten position hinteleportiert, besser wäre, wenn er sich merken würde wo er aufgehört hat
             //foreach (var position in Crossroad.Center.South)
@@ -188,19 +200,34 @@ namespace Ampel__2._0.Classes.Services
 
 
 
-
-            // Biegt immernoch blitzartig ab, wahrscheinlich, weil er zu früh ausm Center ist
-            // Er geht hier nur einmal rein und nicht die 12 Punkte lang -> weil die lane schon übergeben wurde
-
-            if (_southQueue == null||_southQueue.Count == 0 || !InCenter)
+            switch (spawnPoint)
             {
-                Direction = CarDirection.Straight;
-                Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
-                return;
+                case CarSpawnPoint.North:
+
+                    break;
+                case CarSpawnPoint.South:
+                    if (southQueue == null || southQueue.Count == 0 || !InCenter)
+                    {
+                        return;
+                    }
+
+                    Position = southQueue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
+                    //Lane wird übergeben und nicht ermittelt, diese option ist auch nicht perfekt  
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+                    break;
+                case CarSpawnPoint.West:
+
+                    break;
+                case CarSpawnPoint.East:
+                    if (eastQueue == null || eastQueue.Count == 0 || !InCenter)
+                    {
+                        return;
+                    }
+
+                    Position = eastQueue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.SouthToNorth);
+                    break;
             }
-
-            Position = _southQueue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
-
 
         }
 

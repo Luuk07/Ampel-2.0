@@ -204,6 +204,7 @@ namespace Ampel__2._0
             using (Brush brush = new SolidBrush(Color.Purple))
             {
                 g.FillClosedCurve(brush, Main.Crossroad.Center.South.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.East.ToArray());
             }
         }
     }

@@ -13,6 +13,14 @@ namespace Ampel__2._0.Classes.Tools
         Left,
     }
 
+    public enum CarSpawnPoint
+    {
+        North,
+        South,
+        West,
+        East
+    }
+
     public enum RoadDirection
     {
         NorthToSouth,
