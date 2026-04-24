@@ -24,6 +24,8 @@ namespace Ampel__2._0.Classes.Services
 
         private Queue<Point> eastQueue;
 
+        private Queue<Point> northQueue;
+
         internal int BreakingDistance { get; set; }
 
         internal int PufferDistance { get; set; } = 15;
@@ -67,6 +69,7 @@ namespace Ampel__2._0.Classes.Services
             acceleration = 1 * (int)TimeFaktor;
             southQueue = new Queue<Point>(Crossroad.Center.South);
             eastQueue = new Queue<Point>(Crossroad.Center.East);
+            northQueue = new Queue<Point>(Crossroad.Center.North);
 
             // Ist dafür, um zu gucken, wo das Auto gestartet ist, damit die Abbiegung besser funktioniert
             switch (Lane.Road.Direction)
@@ -203,6 +206,14 @@ namespace Ampel__2._0.Classes.Services
             switch (spawnPoint)
             {
                 case CarSpawnPoint.North:
+                    if (northQueue == null || northQueue.Count == 0 || !InCenter)
+                    {
+                        return;
+                    }
+
+                    Position = northQueue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
+                    //Lane wird übergeben und nicht ermittelt, diese option ist auch nicht perfekt  
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.EastToWest);
 
                     break;
                 case CarSpawnPoint.South:
