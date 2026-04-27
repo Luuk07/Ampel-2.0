@@ -15,6 +15,10 @@ namespace Ampel__2._0.Classes.Services
 {
     internal class CclSvcMain
     {
+        CclContLane Lane { get;  set; }
+
+        List<CclContLane> Lanes { get { return Crossroad.Roads.SelectMany(r => r.LanesToCenter).ToList(); }  }
+
         private DateTime LastTickTime;
         private DateTime CurrentSimTime { get; set; }
 
@@ -28,6 +32,8 @@ namespace Ampel__2._0.Classes.Services
 
         private int intervalTimer = 10;
 
+        private int counterToSpawn = 0; 
+
         internal int TimeToChange = 0;
 
         internal CclRandom Random = new CclRandom();
@@ -39,12 +45,21 @@ namespace Ampel__2._0.Classes.Services
             CurrentSimTime = DateTime.Now;
 
             Crossroad = new CclContCrossroad(size, Random, TimeFactor);
-            NextStep += Crossroad.TrafficLightManager.HandleSimulationStep;
-            foreach (var lane in Crossroad.Roads.SelectMany(Road => Road.LanesToCenter))
-            {
-                NextStep += lane.SpawnPoint.HandleSimulationStep;      //Problem: Hier werden immer in allen Lanes die Methode aufgerufen,
-                                                                       //also es wird immer überall ein Auto gespawnt
-            }
+            NextStep += Crossroad.TrafficLightManager.HandleSimulationStep;  
+            NextStep += (sender, e) => 
+                {
+                    //Hier einen Intervall hinzufügen -> vielleicht aber nicht die sauberste Lösung
+                    if (counterToSpawn >= 100)
+                    {
+                        var lane = Lanes[CclRandom.Random.Next(Lanes.Count)];
+                        lane.SpawnPoint.HandleSimulationStep(sender, e);
+                        counterToSpawn = 0;
+                    }
+
+                };
+
+            //NextStep += Lanes[CclRandom.Random.Next(Lanes.Count)].SpawnPoint.HandleSimulationStep;
+
             try
             {
                 _timer = new System.Timers.Timer(intervalTimer);
@@ -58,6 +73,11 @@ namespace Ampel__2._0.Classes.Services
                 _timer.Enabled = true;
             }
         }
+
+      
+
+
+
         private void MainTick(object sender, ElapsedEventArgs e)
         {
             _timer.Enabled = false;
@@ -71,6 +91,7 @@ namespace Ampel__2._0.Classes.Services
 
                 LastTickTime   = DateTime.Now;
                 CurrentSimTime = dtCurrentSimTime;
+                counterToSpawn++;
             }
             finally
             {

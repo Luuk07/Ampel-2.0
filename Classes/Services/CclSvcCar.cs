@@ -39,9 +39,7 @@ namespace Ampel__2._0.Classes.Services
         internal int MaxSpeed { get; set; } = 4;
         
         internal CclContLane Lane { get; set; } 
-                                                                                                                                                     
-        //internal bool InCenter { get { return Area.Contains(Crossroad.Center.Position); } }
-
+                                                                                                                                                    
         internal bool InCenter { get { return Crossroad.Center.Area.IntersectsWith(Area); } }
 
         internal CarDirection Direction { get; set; }
@@ -94,7 +92,7 @@ namespace Ampel__2._0.Classes.Services
   
         public void HandleSimulationStep(object sender, CeaNextStepData e)
         {  
-            // Problem: er ist zu früh nicht mehr im Center und geht in den else Block
+ 
             if (Direction == CarDirection.Right && InCenter)
             {
                 TurnRight();
@@ -196,13 +194,6 @@ namespace Ampel__2._0.Classes.Services
         public void TurnRight()
         {
 
-            // Funktioniert, ist aber nicht so gut, weil der sich zur letzten position hinteleportiert, besser wäre, wenn er sich merken würde wo er aufgehört hat
-            //foreach (var position in Crossroad.Center.South)
-            //{
-            //    Position = position;
-            //}
-            //Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
-
             switch (spawnPoint)
             {
                 case CarSpawnPoint.North:
@@ -212,6 +203,7 @@ namespace Ampel__2._0.Classes.Services
                     }
 
                     Position = northQueue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
+
                     //Lane wird übergeben und nicht ermittelt, diese option ist auch nicht perfekt  
                     Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.EastToWest);
 
