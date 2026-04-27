@@ -32,7 +32,7 @@ namespace Ampel__2._0.Classes.Container
 
             if (createSpawnPoint)
             {
-                SpawnChance = 0.2;
+                SpawnChance = 0.02;
                 switch (Road.Direction)
                 {
                     case RoadDirection.NorthToSouth:

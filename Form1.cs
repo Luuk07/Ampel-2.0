@@ -20,12 +20,14 @@ namespace Ampel__2._0
         internal Rectangle WindowRectangle { get; }
 
         internal Size WindowSize { get; }
+
+        //ToDo: Blinken
         public Form1()
         {
             InitializeComponent();
             WindowRectangle = this.ClientRectangle;
             WindowSize = this.ClientSize;
-            Main = new CclSvcMain(this.WindowSize);//ToDo: Nur Size übergeben ++
+            Main = new CclSvcMain(this.WindowSize);
             Main.NextStep += Main_NextStep;
             this.Paint += Form1_PaintCenter;
             this.Paint += Form1_PaintRoads;
@@ -36,7 +38,7 @@ namespace Ampel__2._0
 
             Main.TimeFactor = timeFaktorBar.Value;
             timeFaktorBar.ValueChanged += TimeFaktorBar_ValueChanged;
-            //ToDo: Mittelpunkt des Fensters der Mainklasse geben++
+         
         }
 
         private void TimeFaktorBar_ValueChanged(object sender, EventArgs e)
@@ -203,10 +205,10 @@ namespace Ampel__2._0
             //}
             using (Brush brush = new SolidBrush(Color.Purple))
             {
-                g.FillClosedCurve(brush, Main.Crossroad.Center.South.ToArray());
-                g.FillClosedCurve(brush, Main.Crossroad.Center.East.ToArray());
-                g.FillClosedCurve(brush, Main.Crossroad.Center.West.ToArray());
-                g.FillClosedCurve(brush, Main.Crossroad.Center.North.ToArray());
+                //g.FillClosedCurve(brush, Main.Crossroad.Center.South.ToArray());
+                //g.FillClosedCurve(brush, Main.Crossroad.Center.East.ToArray());
+                //g.FillClosedCurve(brush, Main.Crossroad.Center.West.ToArray());
+                //g.FillClosedCurve(brush, Main.Crossroad.Center.North.ToArray());
             }
         }
     }

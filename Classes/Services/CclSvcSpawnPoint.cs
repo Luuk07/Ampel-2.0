@@ -19,8 +19,7 @@ namespace Ampel__2._0.Classes.Services
 
         private double intervall = 5000;
         internal CclContCrossroad Crossroad {  get;  }
-        internal CclContLane ParentLane { get; }
-        internal bool IsSpawningCar { get; set; }
+        internal CclContLane ParentLane { get; } 
         internal double SpawnChance { get; set; }
         private int TimeFaktor { get; }
 
@@ -40,8 +39,11 @@ namespace Ampel__2._0.Classes.Services
         // bzw. SpawnPoint und nicht global auf alle
         public void HandleSimulationStep(object sender, CeaNextStepData e)
         {
-              IsSpawningCar = CclRandom.Random.NextDouble() < SpawnChance;
-           
+            bool isSpawningCar = CclRandom.Random.NextDouble() < SpawnChance;
+            if (!isSpawningCar)
+            {
+                return;
+            }
               if (!Crossroad.l_AllCars.Any(car => car.Area.Contains(ParentLane.StartPoint)))
               {
                  if ((DateTime.Now - CarCreated).TotalMilliseconds * TimeFaktor >= intervall)
@@ -52,6 +54,7 @@ namespace Ampel__2._0.Classes.Services
                        e.Main.NextStep += Car.HandleSimulationStep;
                  }
               }
+            }
         }
     }
-}
+

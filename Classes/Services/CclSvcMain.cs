@@ -49,12 +49,12 @@ namespace Ampel__2._0.Classes.Services
             NextStep += (sender, e) => 
                 {
                     //Hier einen Intervall hinzufügen -> vielleicht aber nicht die sauberste Lösung
-                    if (counterToSpawn >= 100)
-                    {
+                    //if (counterToSpawn >= 100)
+                    //{
                         var lane = Lanes[CclRandom.Random.Next(Lanes.Count)];
                         lane.SpawnPoint.HandleSimulationStep(sender, e);
                         counterToSpawn = 0;
-                    }
+                    //}
 
                 };
 

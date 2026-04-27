@@ -16,10 +16,9 @@ namespace Ampel__2._0.Classes.Container
         public CclContRoad CurrentRoad { get; private set; }
         public List<CclContRoad> Roads { get; } = new List<CclContRoad>();
         public CclContCenter Center { get; }
-        public List<CclSvcCar> l_AllCars { get; set; } = new List<CclSvcCar>();
+        public List<CclSvcCar> l_AllCars { get; set; } = new List<CclSvcCar>(); // ToDo: Irgendwann autos entfernen
         public CclRandom Random { get; }
         public CclSvcTrafficLightManager TrafficLightManager { get; set; }
-
         private int TimeFaktor { get; }
         public CclContCrossroad(Size windowSize, CclRandom random, int timeFaktor)
         {
@@ -28,7 +27,6 @@ namespace Ampel__2._0.Classes.Container
             Center = new CclContCenter(windowSize);
             TrafficLightManager = new CclSvcTrafficLightManager(this);
             Center.CreatArea(2, 2);
-            Center.CalculateCurveRight();
             TimeFaktor = timeFaktor;
             CreatRoads();
         }
