@@ -27,8 +27,6 @@ namespace Ampel__2._0.Classes.Container
             Road = road;
             TimeFaktor = timeFaktor;
 
-            //ToDo: Es sollen nicht zwei Autos gleichzeitig spawnen können
-
 
             if (createSpawnPoint)
             {

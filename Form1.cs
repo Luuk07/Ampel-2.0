@@ -1,5 +1,6 @@
 ﻿using Ampel__2._0.Classes.EventArgs;
 using Ampel__2._0.Classes.Services;
+using Ampel__2._0.Classes.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -171,12 +172,51 @@ namespace Ampel__2._0
             Graphics g = e.Graphics;
             foreach (var car in Main.Crossroad.l_AllCars.ToList())
             {
-                using (Brush brush = new SolidBrush(Color.Yellow))
+                Rectangle rectLeftCorner = new Rectangle(
+                         (int)car.Position.X,
+                         (int)car.Position.Y,
+                         4, 4
+                );
+                Rectangle rectRightCorner = new Rectangle(
+                        (int)car.Position.X,
+                        (int)car.Position.Y,
+                        4, 4
+                );
+                using (Brush brush = new SolidBrush(Color.Black))
                 {
                     g.FillRectangle(brush, car.Area);
                     g.DrawRectangle(Pens.Red, car.CheckLineArea);
                 }
+                if (car.Direction == CarDirection.Right)
+                {
+                    switch (car.Lane.Road.Direction)
+                    {
+                        case RoadDirection.NorthToSouth:
+                            rectRightCorner.Y += 6;
+                            rectRightCorner.X -= 6;
+                            break;
+                        case RoadDirection.WestToEast:
+                            rectRightCorner.Y += 6;
+                            rectRightCorner.X += 6;
+                            break;
+                        case RoadDirection.SouthToNorth:
+                            rectRightCorner.X += 6;
+                            rectRightCorner.Y -= 6;
+                            break;
+                        case RoadDirection.EastToWest:
+                            rectRightCorner.X -= 6;
+                            rectRightCorner.Y -= 6;
+                            break;
+                        default:
+                            break;
+                    }
 
+                    using (Brush brush = new SolidBrush(Color.Orange))
+                    {
+                        g.FillRectangle(brush, rectRightCorner);
+                    }
+
+                }
             }
         }
 
@@ -205,10 +245,10 @@ namespace Ampel__2._0
             //}
             using (Brush brush = new SolidBrush(Color.Purple))
             {
-                //g.FillClosedCurve(brush, Main.Crossroad.Center.South.ToArray());
-                //g.FillClosedCurve(brush, Main.Crossroad.Center.East.ToArray());
-                //g.FillClosedCurve(brush, Main.Crossroad.Center.West.ToArray());
-                //g.FillClosedCurve(brush, Main.Crossroad.Center.North.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.South.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.East.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.West.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.North.ToArray());
             }
         }
     }

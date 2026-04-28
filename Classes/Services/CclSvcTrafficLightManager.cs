@@ -121,32 +121,32 @@ namespace Ampel__2._0.Classes.Services
             {
                 SetGroupState(ou, TrafficLightState.Red);
                 SetGroupState(lr, TrafficLightState.YellowGreen);
-                currentPhase = 2;
+                currentPhase = 1;
             }
             // 3. OU Rot | LR Rot+Gelb --> OU Rot | LR Grün
             else if (ou[0].CurrentState == TrafficLightState.Red && lr[0].CurrentState == TrafficLightState.YellowGreen)
             {
                 SetGroupState(lr, TrafficLightState.Green);
-                currentPhase = 3;
+                currentPhase = 1;
             }
             // 4. OU Rot | LR Grün --> OU Rot | LR Gelb
             else if (ou[0].CurrentState == TrafficLightState.Red && lr[0].CurrentState == TrafficLightState.Green)
             {
                 SetGroupState(lr, TrafficLightState.YellowRed);
-                currentPhase = 4;
+                currentPhase = 1;
             }
             // 5. OU Rot | LR Gelb --> OU Rot+Gelb | LR Rot
             else if (ou[0].CurrentState == TrafficLightState.Red && lr[0].CurrentState == TrafficLightState.YellowRed)
             {
                 SetGroupState(ou, TrafficLightState.YellowGreen);
                 SetGroupState(lr, TrafficLightState.Red);
-                currentPhase = 5;
+                currentPhase = 1;
             }
             // 6. OU Rot+Gelb | LR Rot --> OU Grün | LR Rot
             else if (ou[0].CurrentState == TrafficLightState.YellowGreen && lr[0].CurrentState == TrafficLightState.Red)
             {
                 SetGroupState(ou, TrafficLightState.Green);
-                currentPhase = 6;
+                currentPhase = 1;
             }
             //Default
             else

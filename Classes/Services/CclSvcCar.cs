@@ -20,15 +20,16 @@ namespace Ampel__2._0.Classes.Services
 
         private CarSpawnPoint spawnPoint; 
 
-        private Queue<Point> southQueue; // Ist wie eine Warteschlange, erstes Element was drin ist wird als erstes genommen und gelöscht (mit der Methode Dequeue())
+        //private Queue<Point> southQueue; // Ist wie eine Warteschlange, erstes Element was drin ist wird als erstes genommen und gelöscht (mit der Methode Dequeue())
 
-        private Queue<Point> eastQueue;
+        //private Queue<Point> eastQueue;
 
-        private Queue<Point> northQueue;
+        //private Queue<Point> northQueue;
 
-        private Queue<Point> westQueue;
+        //private Queue<Point> westQueue;
 
-        private Queue<Point> queue;
+        private Queue<Point> queue;  // Ist wie eine Warteschlange, erstes Element was drin ist wird als erstes genommen und gelöscht (mit der Methode Dequeue())
+
 
         internal int BreakingDistance { get; set; }
 
@@ -58,7 +59,7 @@ namespace Ampel__2._0.Classes.Services
 
         private int ActualSpeed { get { return CurrentSpeed * TimeFaktor; } }
 
-        //ToDo: Holt sich den Queue den er braucht++
+        //ToDo: Boolean der sagt er ist raus
         public CclSvcCar(CclContCrossroad crossroad, CclContLane lane, int timeFaktor)
         {
             Direction = (CarDirection)CclRandom.Random.Next(0, 3);
@@ -78,19 +79,24 @@ namespace Ampel__2._0.Classes.Services
             switch (Lane.Road.Direction)
             {
                 case RoadDirection.NorthToSouth:
+                    queue = new Queue<Point>(Crossroad.Center.North);
                     spawnPoint = CarSpawnPoint.North;
                     break;
                 case RoadDirection.SouthToNorth:
+                    queue = new Queue<Point>(Crossroad.Center.South);
                     spawnPoint = CarSpawnPoint.South;
                     break;
                 case RoadDirection.WestToEast:
+                    queue = new Queue<Point>(Crossroad.Center.West);
                     spawnPoint = CarSpawnPoint.West;
                     break;
                 case RoadDirection.EastToWest:
+                    queue = new Queue<Point>(Crossroad.Center.East);
                     spawnPoint = CarSpawnPoint.East;
                     break;
             }
-            queue = new Queue<Point>(Crossroad.Center.CalculateCurveRight(spawnPoint));
+            //ToDO: Nur ein Queue für passende richtung
+         
         }
   
         public void HandleSimulationStep(object sender, CeaNextStepData e)
@@ -203,6 +209,7 @@ namespace Ampel__2._0.Classes.Services
                 return;
             }
 
+            //ToDO: Soll die nächste Position angucken und prüfen, ob da auto ist
             Position = queue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
 
 

@@ -10,94 +10,83 @@ using System.Windows.Forms;
 
 namespace Ampel__2._0.Classes.Container
 {
-    internal class CclContCenter: CclContGeometrieBase
+    internal class CclContCenter : CclContGeometrieBase
     {
         internal Size WindowSize { get; }
 
-        //internal List<Point> South { get; set; }
-        //internal List <Point> West   { get; set; }
-        //internal List <Point> East   { get; set; }
-        //internal List <Point> North  { get; set; }
+        internal List<Point> South { get; set; }
+        internal List<Point> West { get; set; }
+        internal List<Point> East { get; set; }
+        internal List<Point> North { get; set; }
 
-        internal List <Point> Queue { get; set; }
+   
 
         public CclContCenter(Size windowSize)
         {
             WindowSize = windowSize;
-            //South = new List<Point>();
-            //East = new List<Point>();
-            //North = new List<Point>();
-            //West = new List<Point>();
-            Queue = new List<Point>();
+            South = new List<Point>();
+            East = new List<Point>();
+            North = new List<Point>();
+            West = new List<Point>();
+        
+          
         }
 
-        public void CreatArea(int lanesInCrossroadNorthSouth, int lanesInCrossroadSouthWest) 
+        public void CreatArea(int lanesInCrossroadNorthSouth, int lanesInCrossroadSouthWest)
         {
             Position = new Point(WindowSize.Width / 2, WindowSize.Height / 2);
             Size = new Size(CstConstants.C_iLaneWidth * lanesInCrossroadSouthWest, CstConstants.C_iLaneWidth * lanesInCrossroadNorthSouth);
         }
 
-        public List<Point> CalculateCurveRight(CarSpawnPoint spawnPoint)
+        public void CalculateCurveRight()
         {
             //Süd-Ost
-            Queue.Clear();
-            switch (spawnPoint)
-            {
-                case CarSpawnPoint.South:
-                    //Süd-Ost
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2, Position.Y + CstConstants.C_iLaneWidth));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2, Position.Y + CstConstants.C_iLaneWidth - 5));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 + 5, Position.Y + CstConstants.C_iLaneWidth - 10));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 + 10, Position.Y + CstConstants.C_iLaneWidth - 15));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 + 15, Position.Y + CstConstants.C_iLaneWidth - 15));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth, Position.Y + CstConstants.C_iLaneWidth / 2));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth + 5, Position.Y + CstConstants.C_iLaneWidth / 2));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth + 10, Position.Y + CstConstants.C_iLaneWidth / 2));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth + 15, Position.Y + CstConstants.C_iLaneWidth / 2));
-                    break;
-                case CarSpawnPoint.East:
-                    //Ost-Nord
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth, Position.Y - CstConstants.C_iLaneWidth / 2));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 5, Position.Y - CstConstants.C_iLaneWidth / 2));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 10, Position.Y - CstConstants.C_iLaneWidth / 2 - 5));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 15, Position.Y - CstConstants.C_iLaneWidth / 2 - 10));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 20, Position.Y - CstConstants.C_iLaneWidth / 2 - 15));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 20, Position.Y - CstConstants.C_iLaneWidth / 2 - 20));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 20, Position.Y - CstConstants.C_iLaneWidth / 2 - 25));
-                    Queue.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 20, Position.Y - CstConstants.C_iLaneWidth / 2 - 30));
-                    break;
-                case CarSpawnPoint.West:
-                    //West-Süd
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth, Position.Y + CstConstants.C_iLaneWidth / 2));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 5, Position.Y + CstConstants.C_iLaneWidth / 2));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 10, Position.Y + CstConstants.C_iLaneWidth / 2 + 5));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 15, Position.Y + CstConstants.C_iLaneWidth / 2 + 10));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 20, Position.Y + CstConstants.C_iLaneWidth / 2 + 15));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 20, Position.Y + CstConstants.C_iLaneWidth / 2 + 20));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 20, Position.Y + CstConstants.C_iLaneWidth / 2 + 25));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 20, Position.Y + CstConstants.C_iLaneWidth / 2 + 30));
-                    break;
-                case CarSpawnPoint.North:
-                    //Nord-West
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2, Position.Y - CstConstants.C_iLaneWidth));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2, Position.Y - CstConstants.C_iLaneWidth + 5));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 5, Position.Y - CstConstants.C_iLaneWidth + 10));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 10, Position.Y - CstConstants.C_iLaneWidth + 15));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 15, Position.Y - CstConstants.C_iLaneWidth + 20));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 20, Position.Y - CstConstants.C_iLaneWidth + 20));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 25, Position.Y - CstConstants.C_iLaneWidth + 20));
-                    Queue.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 30, Position.Y - CstConstants.C_iLaneWidth + 20));
-                    break;
+            South.Clear();
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2, Position.Y + CstConstants.C_iLaneWidth));
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2, Position.Y + CstConstants.C_iLaneWidth - 5));
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 + 5, Position.Y + CstConstants.C_iLaneWidth - 10));
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 + 10, Position.Y + CstConstants.C_iLaneWidth - 15));
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 + 15, Position.Y + CstConstants.C_iLaneWidth - 15));
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth, Position.Y + CstConstants.C_iLaneWidth / 2));
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth + 5, Position.Y + CstConstants.C_iLaneWidth / 2));
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth + 10, Position.Y + CstConstants.C_iLaneWidth / 2));
+            South.Add(new Point(Position.X + CstConstants.C_iLaneWidth + 15, Position.Y + CstConstants.C_iLaneWidth / 2));
+           
+           
 
+            //Ost-Nord
+            East.Clear();
+            East.Add(new Point(Position.X + CstConstants.C_iLaneWidth, Position.Y - CstConstants.C_iLaneWidth / 2));
+            East.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 5, Position.Y - CstConstants.C_iLaneWidth / 2));
+            East.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 10, Position.Y - CstConstants.C_iLaneWidth / 2 - 5));
+            East.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 15, Position.Y - CstConstants.C_iLaneWidth / 2 - 10));
+            East.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 20, Position.Y - CstConstants.C_iLaneWidth / 2 - 15));
+            East.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 20, Position.Y - CstConstants.C_iLaneWidth / 2 - 20));
+            East.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 20, Position.Y - CstConstants.C_iLaneWidth / 2 - 25));
+            East.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 20, Position.Y - CstConstants.C_iLaneWidth / 2 - 30));
 
-            }
+            //Nord-West
+            North.Clear();
+            North.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2, Position.Y - CstConstants.C_iLaneWidth));
+            North.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2, Position.Y - CstConstants.C_iLaneWidth + 5));
+            North.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 5, Position.Y - CstConstants.C_iLaneWidth + 10));
+            North.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 10, Position.Y - CstConstants.C_iLaneWidth + 15));
+            North.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 15, Position.Y - CstConstants.C_iLaneWidth + 20));
+            North.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 20, Position.Y - CstConstants.C_iLaneWidth + 20));
+            North.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 25, Position.Y - CstConstants.C_iLaneWidth + 20));
+            North.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 - 30, Position.Y - CstConstants.C_iLaneWidth + 20));
 
-            return Queue;
-
-
-
+            //West-Süd
+            West.Clear();
+            West.Add(new Point(Position.X - CstConstants.C_iLaneWidth, Position.Y + CstConstants.C_iLaneWidth / 2));
+            West.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 5, Position.Y + CstConstants.C_iLaneWidth / 2));
+            West.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 10, Position.Y + CstConstants.C_iLaneWidth / 2 + 5));
+            West.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 15, Position.Y + CstConstants.C_iLaneWidth / 2 + 10));
+            West.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 20, Position.Y + CstConstants.C_iLaneWidth / 2 + 15));
+            West.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 20, Position.Y + CstConstants.C_iLaneWidth / 2 + 20));
+            West.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 20, Position.Y + CstConstants.C_iLaneWidth / 2 + 25));
+            West.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 20, Position.Y + CstConstants.C_iLaneWidth / 2 + 30));
 
         }
-
     }
 }

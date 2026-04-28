@@ -32,7 +32,6 @@ namespace Ampel__2._0.Classes.Services
 
         private int intervalTimer = 10;
 
-        private int counterToSpawn = 0; 
 
         internal int TimeToChange = 0;
 
@@ -47,16 +46,12 @@ namespace Ampel__2._0.Classes.Services
             Crossroad = new CclContCrossroad(size, Random, TimeFactor);
             NextStep += Crossroad.TrafficLightManager.HandleSimulationStep;  
             NextStep += (sender, e) => 
-                {
-                    //Hier einen Intervall hinzufügen -> vielleicht aber nicht die sauberste Lösung
-                    //if (counterToSpawn >= 100)
-                    //{
-                        var lane = Lanes[CclRandom.Random.Next(Lanes.Count)];
-                        lane.SpawnPoint.HandleSimulationStep(sender, e);
-                        counterToSpawn = 0;
-                    //}
-
+                {       
+                    var lane = Lanes[CclRandom.Random.Next(Lanes.Count)];
+                    lane.SpawnPoint.HandleSimulationStep(sender, e);
                 };
+
+            NextStep += Crossroad.HandleSimulationStep;
 
             //NextStep += Lanes[CclRandom.Random.Next(Lanes.Count)].SpawnPoint.HandleSimulationStep;
 
@@ -87,11 +82,10 @@ namespace Ampel__2._0.Classes.Services
                 DateTime dtCurrentSimTime      = CurrentSimTime.AddMilliseconds(dSimTimeSinceLastTick * TimeFactor);
 
                 NextStep?.Invoke(this, new CeaNextStepData(dtCurrentSimTime, dSimTimeSinceLastTick, this));
-                //NextStep?.Invoke(this, new CeaNextStepData(LastTickTime ,dSimTimeSinceLastTick, this));
+          
 
                 LastTickTime   = DateTime.Now;
                 CurrentSimTime = dtCurrentSimTime;
-                counterToSpawn++;
             }
             finally
             {
