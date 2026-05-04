@@ -20,17 +20,9 @@ namespace Ampel__2._0.Classes.Services
 
         private CarSpawnPoint spawnPoint; 
 
-        //private Queue<Point> southQueue; // Ist wie eine Warteschlange, erstes Element was drin ist wird als erstes genommen und gelöscht (mit der Methode Dequeue())
+        private Queue<Point> queueRight;  // Ist wie eine Warteschlange, erstes Element was drin ist wird als erstes genommen und gelöscht (mit der Methode Dequeue())
 
-        //private Queue<Point> eastQueue;
-
-        //private Queue<Point> northQueue;
-
-        //private Queue<Point> westQueue;
-
-        private Queue<Point> queue;  // Ist wie eine Warteschlange, erstes Element was drin ist wird als erstes genommen und gelöscht (mit der Methode Dequeue())
-
-
+        private Queue<Point> queueLeft;
         internal int BreakingDistance { get; set; }
 
         internal int PufferDistance { get; set; } = 15;
@@ -59,7 +51,20 @@ namespace Ampel__2._0.Classes.Services
 
         private int ActualSpeed { get { return CurrentSpeed * TimeFaktor; } }
 
-        //ToDo: Boolean der sagt er ist raus
+        internal bool IsOut { get 
+            {
+                if (Position.X >= 700 || Position.X < 0 || Position.Y >= 700 || Position.Y < 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        //ToDo: Boolean der sagt er ist raus++
         public CclSvcCar(CclContCrossroad crossroad, CclContLane lane, int timeFaktor)
         {
             Direction = (CarDirection)CclRandom.Random.Next(0, 3);
@@ -70,47 +75,72 @@ namespace Ampel__2._0.Classes.Services
             Position = lane.StartPoint;
             deceleration = 1 * (int)TimeFaktor;
             acceleration = 1 * (int)TimeFaktor;
-            //southQueue = new Queue<Point>(Crossroad.Center.South);
-            //eastQueue = new Queue<Point>(Crossroad.Center.East);
-            //northQueue = new Queue<Point>(Crossroad.Center.North);
-            //westQueue = new Queue<Point>(Crossroad.Center.West);
-
-            // Ist dafür, um zu gucken, wo das Auto gestartet ist, damit die Abbiegung besser funktioniert
+       
+       
             switch (Lane.Road.Direction)
             {
                 case RoadDirection.NorthToSouth:
-                    queue = new Queue<Point>(Crossroad.Center.North);
+                    queueRight = new Queue<Point>(Crossroad.Center.NorthWest);
                     spawnPoint = CarSpawnPoint.North;
                     break;
                 case RoadDirection.SouthToNorth:
-                    queue = new Queue<Point>(Crossroad.Center.South);
+                    queueRight = new Queue<Point>(Crossroad.Center.SouthEast);
                     spawnPoint = CarSpawnPoint.South;
                     break;
                 case RoadDirection.WestToEast:
-                    queue = new Queue<Point>(Crossroad.Center.West);
+                    queueRight = new Queue<Point>(Crossroad.Center.WestSouth);
                     spawnPoint = CarSpawnPoint.West;
                     break;
                 case RoadDirection.EastToWest:
-                    queue = new Queue<Point>(Crossroad.Center.East);
+                    queueRight = new Queue<Point>(Crossroad.Center.EastNorth);
                     spawnPoint = CarSpawnPoint.East;
                     break;
             }
-            //ToDO: Nur ein Queue für passende richtung
-         
+            switch (Lane.Road.Direction)
+            {
+                case RoadDirection.NorthToSouth:
+                    queueLeft = new Queue<Point>(Crossroad.Center.NorthEast);
+                    spawnPoint = CarSpawnPoint.North;
+                    break;
+                case RoadDirection.SouthToNorth:
+                    queueLeft = new Queue<Point>(Crossroad.Center.SouthWest);
+                    spawnPoint = CarSpawnPoint.South;
+                    break;
+                case RoadDirection.WestToEast:
+                    queueLeft = new Queue<Point>(Crossroad.Center.WestNorth);
+                    spawnPoint = CarSpawnPoint.West;
+                    break;
+                case RoadDirection.EastToWest:
+                    queueLeft = new Queue<Point>(Crossroad.Center.EastSouth);
+                    spawnPoint = CarSpawnPoint.East;
+                    break;
+            }
+
+
         }
   
         public void HandleSimulationStep(object sender, CeaNextStepData e)
-        {  
- 
+        {
+            if (IsOut)
+            {
+                Crossroad.l_AllCars.Remove(this);
+            }
+
             if (Direction == CarDirection.Right && InCenter)
             {
                 TurnRight();
 
             }
+            else if (Direction == CarDirection.Left && InCenter)
+            {
+                TurnLeft();
+            }
             else
             {
                 MoveBasedOnLane();
             }
+
+
         }
         private void MoveBasedOnLane()
         {
@@ -204,13 +234,14 @@ namespace Ampel__2._0.Classes.Services
         {
 
          
-            if (queue == null || queue.Count == 0 || !InCenter)
+            if (queueRight == null || queueRight.Count == 0 || !InCenter)
             {
                 return;
             }
 
             //ToDO: Soll die nächste Position angucken und prüfen, ob da auto ist
-            Position = queue.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
+
+            Position = queueRight.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
 
 
             switch (spawnPoint)
@@ -231,6 +262,32 @@ namespace Ampel__2._0.Classes.Services
             }
 
         }
+
+        public void TurnLeft()
+        {
+            if (queueLeft == null || queueLeft.Count == 0 || !InCenter)
+            {
+                return;
+            }
+            Position = queueLeft.Dequeue();
+            switch (spawnPoint)
+            {
+                case CarSpawnPoint.North:
+                    //ToDo: SelectMany für Roads in Crossroad
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+                    break;
+                case CarSpawnPoint.West:
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.SouthToNorth);
+                    break;
+                case CarSpawnPoint.South:
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.EastToWest);
+                    break;
+                case CarSpawnPoint.East:
+                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.NorthToSouth);
+                    break;
+            }
+        }
+
 
     }
 }

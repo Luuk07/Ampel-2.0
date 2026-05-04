@@ -29,6 +29,7 @@ namespace Ampel__2._0.Classes.Container
             TrafficLightManager = new CclSvcTrafficLightManager(this);
             Center.CreatArea(2, 2);
             Center.CalculateCurveRight();
+            Center.CalculateCurveLeft();
             TimeFaktor = timeFaktor;
             CreatRoads();
         }

@@ -245,10 +245,17 @@ namespace Ampel__2._0
             //}
             using (Brush brush = new SolidBrush(Color.Purple))
             {
-                g.FillClosedCurve(brush, Main.Crossroad.Center.South.ToArray());
-                g.FillClosedCurve(brush, Main.Crossroad.Center.East.ToArray());
-                g.FillClosedCurve(brush, Main.Crossroad.Center.West.ToArray());
-                g.FillClosedCurve(brush, Main.Crossroad.Center.North.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.SouthEast.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.EastNorth.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.WestSouth.ToArray());
+                g.FillClosedCurve(brush, Main.Crossroad.Center.NorthWest.ToArray());
+            }
+            using (Brush brush = new SolidBrush(Color.Yellow))
+            {
+                //g.FillClosedCurve(brush, Main.Crossroad.Center.SouthWest.ToArray());
+                //g.FillClosedCurve(brush, Main.Crossroad.Center.EastSouth.ToArray());
+                //g.FillClosedCurve(brush, Main.Crossroad.Center.NorthEast.ToArray());
+                //g.FillClosedCurve(brush, Main.Crossroad.Center.WestNorth.ToArray());
             }
         }
     }
