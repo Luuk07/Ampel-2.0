@@ -31,7 +31,7 @@ namespace Ampel__2._0.Classes.Services
 
         internal Rectangle CheckLineArea;
 
-        internal int MaxSpeed { get; set; } = 4;
+        internal int MaxSpeed { get; set; } = 3;
         
         internal CclContLane Lane { get; set; } 
                                                                                                                                                     
@@ -239,7 +239,7 @@ namespace Ampel__2._0.Classes.Services
                 return;
             }
 
-            //ToDO: Soll die nächste Position angucken und prüfen, ob da auto ist
+            
 
             Position = queueRight.Dequeue(); // Nimmt, das erste element und entfernt es danach dauerhaft
 
@@ -269,6 +269,30 @@ namespace Ampel__2._0.Classes.Services
             {
                 return;
             }
+
+            //ToDO: Soll die nächste Position angucken und prüfen, ob da auto ist
+            Point NextPosition = queueLeft.Peek();
+
+            Point[] Positions = queueLeft.ToArray();
+            int counter = 0;
+            foreach (var position in Positions)
+            {
+                if (Crossroad.l_AllCars.Where(c => c != this).Any(c => c.Area.Contains(position)))
+                {
+                    return;
+                }
+                if (counter >= 3)
+                {
+                    counter = 0;
+                    break;
+                }
+                counter++;
+            }
+            //if (Crossroad.l_AllCars.Where(c => c != this).Any(c => c.Area.Contains(NextPosition)))
+            //{
+            //    return;
+            //}
+
             Position = queueLeft.Dequeue();
             switch (spawnPoint)
             {

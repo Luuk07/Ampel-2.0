@@ -172,12 +172,8 @@ namespace Ampel__2._0
             Graphics g = e.Graphics;
             foreach (var car in Main.Crossroad.l_AllCars.ToList())
             {
-                Rectangle rectLeftCorner = new Rectangle(
-                         (int)car.Position.X,
-                         (int)car.Position.Y,
-                         4, 4
-                );
-                Rectangle rectRightCorner = new Rectangle(
+               
+                Rectangle rectCorner = new Rectangle(
                         (int)car.Position.X,
                         (int)car.Position.Y,
                         4, 4
@@ -192,20 +188,20 @@ namespace Ampel__2._0
                     switch (car.Lane.Road.Direction)
                     {
                         case RoadDirection.NorthToSouth:
-                            rectRightCorner.Y += 6;
-                            rectRightCorner.X -= 6;
+                            rectCorner.Y += 6;
+                            rectCorner.X -= 6;
                             break;
                         case RoadDirection.WestToEast:
-                            rectRightCorner.Y += 6;
-                            rectRightCorner.X += 6;
+                            rectCorner.Y += 6;
+                            rectCorner.X += 6;
                             break;
                         case RoadDirection.SouthToNorth:
-                            rectRightCorner.X += 6;
-                            rectRightCorner.Y -= 6;
+                            rectCorner.X += 6;
+                            rectCorner.Y -= 6;
                             break;
                         case RoadDirection.EastToWest:
-                            rectRightCorner.X -= 6;
-                            rectRightCorner.Y -= 6;
+                            rectCorner.X -= 6;
+                            rectCorner.Y -= 6;
                             break;
                         default:
                             break;
@@ -213,7 +209,37 @@ namespace Ampel__2._0
 
                     using (Brush brush = new SolidBrush(Color.Orange))
                     {
-                        g.FillRectangle(brush, rectRightCorner);
+                        g.FillRectangle(brush, rectCorner);
+                    }
+
+                }
+                if (car.Direction == CarDirection.Left)
+                {
+                    switch (car.Lane.Road.Direction)
+                    {
+                        case RoadDirection.NorthToSouth:
+                            rectCorner.Y += 6;
+                            rectCorner.X += 6;
+                            break;
+                        case RoadDirection.WestToEast:
+                            rectCorner.Y -= 6;
+                            rectCorner.X += 6;
+                            break;
+                        case RoadDirection.SouthToNorth:
+                            rectCorner.X -= 6;
+                            rectCorner.Y -= 6;
+                            break;
+                        case RoadDirection.EastToWest:
+                            rectCorner.X -= 6;
+                            rectCorner.Y += 6;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    using (Brush brush = new SolidBrush(Color.Green))
+                    {
+                        g.FillRectangle(brush, rectCorner);
                     }
 
                 }

@@ -113,7 +113,7 @@ namespace Ampel__2._0.Classes.Container
             SouthWest.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 - 15, Position.Y + CstConstants.C_iLaneWidth - 25));
             SouthWest.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 - 15, Position.Y + CstConstants.C_iLaneWidth - 30));
             SouthWest.Add(new Point(Position.X + CstConstants.C_iLaneWidth / 2 - 15, Position.Y + CstConstants.C_iLaneWidth - 35));
-            SouthWest.Add(new Point(Position.X , Position.Y));
+            //SouthWest.Add(new Point(Position.X - 2, Position.Y + 2));
             SouthWest.Add(new Point(Position.X - 5, Position.Y - 5));
             SouthWest.Add(new Point(Position.X - 10, Position.Y - 7));
             SouthWest.Add(new Point(Position.X - 15, Position.Y - 10));
@@ -136,7 +136,7 @@ namespace Ampel__2._0.Classes.Container
             EastSouth.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 30, Position.Y - CstConstants.C_iLaneWidth / 2 + 14));
             EastSouth.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 35, Position.Y - CstConstants.C_iLaneWidth / 2 + 18));
             EastSouth.Add(new Point(Position.X + CstConstants.C_iLaneWidth - 40, Position.Y - CstConstants.C_iLaneWidth / 2 + 20));
-            EastSouth.Add(new Point(Position.X, Position.Y));
+            //EastSouth.Add(new Point(Position.X + 2, Position.Y));
             EastSouth.Add(new Point(Position.X - 2, Position.Y + 5));
             EastSouth.Add(new Point(Position.X - 4, Position.Y + 10));
             EastSouth.Add(new Point(Position.X - 7, Position.Y + 15));
@@ -159,7 +159,7 @@ namespace Ampel__2._0.Classes.Container
             NorthEast.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 + 13, Position.Y - CstConstants.C_iLaneWidth + 30));
             NorthEast.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 + 16, Position.Y - CstConstants.C_iLaneWidth + 35));
             NorthEast.Add(new Point(Position.X - CstConstants.C_iLaneWidth / 2 + 20, Position.Y - CstConstants.C_iLaneWidth + 40));
-            NorthEast.Add(new Point(Position.X, Position.Y));
+            //NorthEast.Add(new Point(Position.X + 2, Position.Y -2));
             NorthEast.Add(new Point(Position.X + 5, Position.Y + 2));
             NorthEast.Add(new Point(Position.X + 10, Position.Y + 4));
             NorthEast.Add(new Point(Position.X + 15, Position.Y + 7));
@@ -182,7 +182,7 @@ namespace Ampel__2._0.Classes.Container
             WestNorth.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 30, Position.Y + CstConstants.C_iLaneWidth / 2 - 13));
             WestNorth.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 35, Position.Y + CstConstants.C_iLaneWidth / 2 - 17));
             WestNorth.Add(new Point(Position.X - CstConstants.C_iLaneWidth + 40, Position.Y + CstConstants.C_iLaneWidth / 2 - 20));
-            WestNorth.Add(new Point(Position.X, Position.Y));
+            //WestNorth.Add(new Point(Position.X - 2, Position.Y -2));
             WestNorth.Add(new Point(Position.X + 2, Position.Y - 5));
             WestNorth.Add(new Point(Position.X + 4, Position.Y - 10));
             WestNorth.Add(new Point(Position.X + 7, Position.Y - 15));
