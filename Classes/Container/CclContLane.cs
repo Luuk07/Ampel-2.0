@@ -14,7 +14,11 @@ namespace Ampel__2._0.Classes.Container
     {
         internal Rectangle StopArea { get; } 
         internal Point StartPoint { get; } 
+
+        // Außerhalb vom Fenster
         internal CclSvcSpawnPoint SpawnPoint { get; }
+
+        //Bisschen übers Fenster
         internal CclContRoad Road { get; }
         internal bool LeedsToTrafficlight { get { return SpawnPoint != null; } }
         internal List<CclSvcCar> l_carsInLane { get; } = new List<CclSvcCar>();

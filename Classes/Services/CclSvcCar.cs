@@ -67,7 +67,7 @@ namespace Ampel__2._0.Classes.Services
         {
             deceleration = 1 * (int)Crossroad.TimeFaktor;
             acceleration = 1 * (int)Crossroad.TimeFaktor;
-            MaxSpeed = 1 * (int)Crossroad.TimeFaktor;
+            MaxSpeed = 2 * (int)Crossroad.TimeFaktor;
         }
 
 
@@ -292,7 +292,7 @@ namespace Ampel__2._0.Classes.Services
                 }
                 if (counter >= 3)
                 {
-                    counter = 0;
+      
                     break;
                 }
                 counter++;

@@ -22,7 +22,7 @@ namespace Ampel__2._0
 
         internal Size WindowSize { get; }
 
-        //ToDo: Blinken
+        //ToDo: Dynamisch größe anpassen
         public Form1()
         {
             InitializeComponent();
