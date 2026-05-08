@@ -21,17 +21,21 @@ namespace Ampel__2._0.Classes.Services
         internal CclContCrossroad Crossroad {  get;  }
         internal CclContLane ParentLane { get; } 
         internal double SpawnChance { get; set; }
-        private int TimeFaktor { get; }
+        private int TimeFaktor { get; set; } = 2;
 
 
-        public CclSvcSpawnPoint(CclContLane parentLane, CclContCrossroad crossroad, CclRandom random, double spawnChance, int timeFaktor) 
+        public CclSvcSpawnPoint(CclContLane parentLane, CclContCrossroad crossroad, CclRandom random, double spawnChance) 
         {
             SpawnChance = spawnChance;
             LanePosition = parentLane.Position;
             Crossroad = crossroad;  
             ParentLane = parentLane;
             CarCreated = DateTime.Now;
-            TimeFaktor = timeFaktor;
+   
+        }
+        public void HandleTimeFactor(object sender, int newValue)
+        {
+            TimeFaktor = newValue;
         }
 
         // ToDo: Nur ein Auto spawnen, jetzt wird momentan auf jeder Lane ein Auto gespawnt
@@ -49,7 +53,7 @@ namespace Ampel__2._0.Classes.Services
                  if ((DateTime.Now - CarCreated).TotalMilliseconds * TimeFaktor >= intervall)
                  {
                        CarCreated = DateTime.Now;
-                       CclSvcCar Car = new CclSvcCar(Crossroad, ParentLane, TimeFaktor);
+                       CclSvcCar Car = new CclSvcCar(Crossroad, ParentLane);
                        Crossroad.l_AllCars.Add(Car);
                        e.Main.NextStep += Car.HandleSimulationStep;
                  }

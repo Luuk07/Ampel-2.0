@@ -16,7 +16,7 @@ namespace Ampel__2._0.Classes.Services
     {
 
         //ToDo: Einen Ereignishändlermethode analog zum Spawnpoint erzeugen, welcher auf das NextStep erreignis reagiert ++
-        internal int CurrentSpeed { get; private set; } = 0;
+        internal int CurrentSpeed { get; private set; }
 
         private CarSpawnPoint spawnPoint; 
 
@@ -31,7 +31,7 @@ namespace Ampel__2._0.Classes.Services
 
         internal Rectangle CheckLineArea;
 
-        internal int MaxSpeed { get; set; } = 3;
+        internal int MaxSpeed { get; set; }
         
         internal CclContLane Lane { get; set; } 
                                                                                                                                                     
@@ -47,7 +47,7 @@ namespace Ampel__2._0.Classes.Services
 
         internal int acceleration { get; set; }
 
-        private int TimeFaktor { get; }
+        private int TimeFaktor { get; set; } = 2;
 
         private int ActualSpeed { get { return CurrentSpeed * TimeFaktor; } }
 
@@ -63,20 +63,28 @@ namespace Ampel__2._0.Classes.Services
                 }
             }
         }
+        public void updateSpeed()
+        {
+            deceleration = 1 * (int)Crossroad.TimeFaktor;
+            acceleration = 1 * (int)Crossroad.TimeFaktor;
+            MaxSpeed = 1 * (int)Crossroad.TimeFaktor;
+        }
+
+
 
         //ToDo: Boolean der sagt er ist raus++
-        public CclSvcCar(CclContCrossroad crossroad, CclContLane lane, int timeFaktor)
+        public CclSvcCar(CclContCrossroad crossroad, CclContLane lane)
         {
             Direction = (CarDirection)CclRandom.Random.Next(0, 3);
-            TimeFaktor = timeFaktor;
+            //TimeFaktor = timeFaktor;
             Crossroad = crossroad;  
             Lane = lane;
             Size = new Size(20, 20); 
             Position = lane.StartPoint;
-            deceleration = 1 * (int)TimeFaktor;
-            acceleration = 1 * (int)TimeFaktor;
-       
-       
+            updateSpeed();
+
+
+
             switch (Lane.Road.Direction)
             {
                 case RoadDirection.NorthToSouth:
@@ -121,6 +129,7 @@ namespace Ampel__2._0.Classes.Services
   
         public void HandleSimulationStep(object sender, CeaNextStepData e)
         {
+           
             if (IsOut)
             {
                 Crossroad.l_AllCars.Remove(this);
@@ -270,14 +279,14 @@ namespace Ampel__2._0.Classes.Services
                 return;
             }
 
-            //ToDO: Soll die nächste Position angucken und prüfen, ob da auto ist
+            //ToDO: Soll die nächste Position angucken und prüfen, ob da auto ist+
             Point NextPosition = queueLeft.Peek();
 
             Point[] Positions = queueLeft.ToArray();
             int counter = 0;
             foreach (var position in Positions)
             {
-                if (Crossroad.l_AllCars.Where(c => c != this).Any(c => c.Area.Contains(position)))
+                if (Crossroad.l_AllCars.Where(c => c != this && c.Direction == CarDirection.Straight).Any(c => c.Area.Contains(position)))
                 {
                     return;
                 }
@@ -297,17 +306,17 @@ namespace Ampel__2._0.Classes.Services
             switch (spawnPoint)
             {
                 case CarSpawnPoint.North:
-                    //ToDo: SelectMany für Roads in Crossroad
-                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
+                    //ToDo: SelectMany für Roads in Crossroad+
+                    Lane = Crossroad.Lanes.FirstOrDefault(l => l.Road.Direction == RoadDirection.WestToEast);
                     break;
                 case CarSpawnPoint.West:
-                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.SouthToNorth);
+                    Lane = Crossroad.Lanes.FirstOrDefault(l => l.Road.Direction == RoadDirection.SouthToNorth);
                     break;
                 case CarSpawnPoint.South:
-                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.EastToWest);
+                    Lane = Crossroad.Lanes.FirstOrDefault(l => l.Road.Direction == RoadDirection.EastToWest);
                     break;
                 case CarSpawnPoint.East:
-                    Lane = Crossroad.Roads.SelectMany(r => r.Lanes).FirstOrDefault(l => l.Road.Direction == RoadDirection.NorthToSouth);
+                    Lane = Crossroad.Lanes.FirstOrDefault(l => l.Road.Direction == RoadDirection.NorthToSouth);
                     break;
             }
         }

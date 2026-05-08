@@ -36,22 +36,22 @@ namespace Ampel__2._0.Classes.Container
                     case RoadDirection.NorthToSouth:
                         Size = new Size(CstConstants.C_iLaneWidth, Road.Size.Height);
                         Position = new Point(Road.Position.X - CstConstants.C_iLaneWidth/2, Road.Position.Y);
-                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance, TimeFaktor);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
                         break;
                     case RoadDirection.SouthToNorth:
                         Size = new Size(CstConstants.C_iLaneWidth, Road.Size.Height);
                         Position = new Point(Road.Position.X + CstConstants.C_iLaneWidth / 2, Road.Position.Y);
-                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance, TimeFaktor);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
                         break;
                     case RoadDirection.EastToWest:
                         Size = new Size(Road.Size.Width, CstConstants.C_iLaneWidth);
                         Position = new Point(Road.Position.X, Road.Position.Y - CstConstants.C_iLaneWidth / 2);
-                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance, TimeFaktor);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
                         break;
                     case RoadDirection.WestToEast:
                         Size = new Size(Road.Size.Width, CstConstants.C_iLaneWidth);
                         Position = new Point(Road.Position.X, Road.Position.Y + CstConstants.C_iLaneWidth / 2);
-                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance, TimeFaktor);
+                        SpawnPoint = new CclSvcSpawnPoint(this, crossroad, random, SpawnChance);
                         break;
                 }
                 StopArea = CalculateStopArea();

@@ -15,6 +15,7 @@ namespace Ampel__2._0.Classes.Services
 {
     internal class CclSvcMain
     {
+        private int _timeFactor = 2;
         CclContLane Lane { get;  set; }
 
         List<CclContLane> Lanes { get { return Crossroad.Roads.SelectMany(r => r.LanesToCenter).ToList(); }  }
@@ -24,7 +25,21 @@ namespace Ampel__2._0.Classes.Services
 
         //Nicht nur Ampel, sondern auch Geschwindigkeit der Autos, Häufigkeit des Spawns++ 
         //-> Ist jetzt bei allen relevanten Werten 
-        internal int TimeFactor { get; set; } = 2;
+
+        internal int TimeFactor
+        {
+            get => _timeFactor;
+            set
+            {
+                if (_timeFactor != value)
+                {
+                    _timeFactor = value;
+                    TimeFactorChanged?.Invoke(this, _timeFactor);
+                }
+            }
+        }
+
+        public event EventHandler <int> TimeFactorChanged;
 
         internal event EventHandler<CeaNextStepData> NextStep;
 
@@ -36,14 +51,26 @@ namespace Ampel__2._0.Classes.Services
         internal int TimeToChange = 0;
 
         internal CclRandom Random = new CclRandom();
-        internal CclContCrossroad Crossroad { get; set; } 
+        internal CclContCrossroad Crossroad { get; set; }
 
-        
+
+
+
+
         public CclSvcMain(Size size)
         {
             CurrentSimTime = DateTime.Now;
 
-            Crossroad = new CclContCrossroad(size, Random, TimeFactor);
+            //Problem: TimeFakto hier zu übergeben brint nichts, da es einmal gesetzt wird und dann nicht mehr upgedatet wird
+            //deswegen -> mit Event arbeiten
+            Crossroad = new CclContCrossroad(size, Random);
+           
+            TimeFactorChanged += Crossroad.HandleTimeFactor;
+            foreach (var lane in Lanes)
+            {
+                TimeFactorChanged += lane.SpawnPoint.HandleTimeFactor;
+            }
+         
             NextStep += Crossroad.TrafficLightManager.HandleSimulationStep;  
             NextStep += (sender, e) => 
                 {       
@@ -51,9 +78,7 @@ namespace Ampel__2._0.Classes.Services
                     lane.SpawnPoint.HandleSimulationStep(sender, e);
                 };
 
-            NextStep += Crossroad.HandleSimulationStep;
-
-            //NextStep += Lanes[CclRandom.Random.Next(Lanes.Count)].SpawnPoint.HandleSimulationStep;
+       
 
             try
             {
@@ -82,7 +107,7 @@ namespace Ampel__2._0.Classes.Services
                 DateTime dtCurrentSimTime      = CurrentSimTime.AddMilliseconds(dSimTimeSinceLastTick * TimeFactor);
 
                 NextStep?.Invoke(this, new CeaNextStepData(dtCurrentSimTime, dSimTimeSinceLastTick, this));
-          
+             
 
                 LastTickTime   = DateTime.Now;
                 CurrentSimTime = dtCurrentSimTime;

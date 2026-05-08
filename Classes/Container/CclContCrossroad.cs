@@ -20,8 +20,13 @@ namespace Ampel__2._0.Classes.Container
         public List<CclSvcCar> l_AllCars { get; set; } = new List<CclSvcCar>(); // ToDo: Irgendwann autos entfernen+
         public CclRandom Random { get; }
         public CclSvcTrafficLightManager TrafficLightManager { get; set; }
-        private int TimeFaktor { get; }
-        public CclContCrossroad(Size windowSize, CclRandom random, int timeFaktor)
+
+        public List<CclContLane> Lanes
+        {
+            get { return Roads.SelectMany(r => r.Lanes).ToList(); }
+        }
+        internal int TimeFaktor { get; set; } = 2;
+        public CclContCrossroad(Size windowSize, CclRandom random)
         {
             WindowSize = windowSize;
             Random = random;
@@ -30,9 +35,17 @@ namespace Ampel__2._0.Classes.Container
             Center.CreatArea(2, 2);
             Center.CalculateCurveRight();
             Center.CalculateCurveLeft();
-            TimeFaktor = timeFaktor;
             CreatRoads();
         }
+        public void HandleTimeFactor(object sender, int newValue)
+        {
+            TimeFaktor = newValue;
+            foreach (var car in l_AllCars)
+            {
+                car.updateSpeed();
+            }
+        }
+
         public void CreatRoads()
         {
             for (int i = 1; i <= 4; i++)
@@ -41,16 +54,16 @@ namespace Ampel__2._0.Classes.Container
                 switch (i)
                 {
                     case 1:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.SouthToNorth,Center, WindowSize, Random, 2, true, TimeFaktor);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.SouthToNorth,Center, WindowSize, Random, 2, true);
                         break;
                     case 2:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.WestToEast, Center, WindowSize, Random, 2, true, TimeFaktor);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.WestToEast, Center, WindowSize, Random, 2, true);
                         break;
                     case 3:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.NorthToSouth, Center, WindowSize, Random, 2, true, TimeFaktor);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.NorthToSouth, Center, WindowSize, Random, 2, true);
                         break;
                     case 4:
-                        Road = new CclContRoad(50, this, Tools.RoadDirection.EastToWest, Center, WindowSize, Random, 2, true, TimeFaktor);
+                        Road = new CclContRoad(50, this, Tools.RoadDirection.EastToWest, Center, WindowSize, Random, 2, true);
                         break;
                     default:
                         Road = null;
@@ -60,22 +73,6 @@ namespace Ampel__2._0.Classes.Container
             }
         }
 
-        //Delete Cars die nicht auf Crossroad sind -> hängt aber, wenn sehr viele Autos entfernt werden
-        public void HandleSimulationStep(object sender, CeaNextStepData e)
-        {
-            //l_AllCars.RemoveAll(clItem => clItem.);
-
-
-            //foreach (var car in l_AllCars)
-            //{
-            //    if (car.Position.X >= 450 || car.Position.X < 0 || car.Position.Y >= 450 || car.Position.Y < 0)
-            //    {
-            //        l_AllCars.Remove(car);
-            //    }
-            //}
-        }
+    
     }
 }
-
-//Roads.FirstOrDefault(r => r.Direction == Tools.RoadDirection.NorthToSouth).Lanes.Count(), 
-//Roads.FirstOrDefault(r => r.Direction == Tools.RoadDirection.EastToWest).Lanes.Count())

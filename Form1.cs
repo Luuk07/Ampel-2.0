@@ -37,7 +37,7 @@ namespace Ampel__2._0
             this.Paint += Form1_PaintCar;
             this.Paint += Form1_PaintPoints;
 
-            Main.TimeFactor = timeFaktorBar.Value;
+            Main.TimeFactor = timeFaktorBar.Value/2;
             timeFaktorBar.ValueChanged += TimeFaktorBar_ValueChanged;
          
         }
