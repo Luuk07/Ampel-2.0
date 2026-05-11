@@ -61,7 +61,11 @@ namespace Ampel__2._0.Classes.Services
             //deswegen -> mit Event arbeiten
             Crossroad = new CclContCrossroad(size, Random);
            
-            TimeFactorChanged += Crossroad.HandleTimeFactor;
+            foreach (var car in Crossroad.l_AllCars)
+            {
+                TimeFactorChanged += car.HandleTimeFactor;
+            }
+            
             foreach (var lane in Lanes)
             {
                 TimeFactorChanged += lane.SpawnPoint.HandleTimeFactor;
@@ -69,10 +73,10 @@ namespace Ampel__2._0.Classes.Services
          
             NextStep += Crossroad.TrafficLightManager.HandleSimulationStep;  
             NextStep += (sender, e) => 
-                {       
+            {       
                     var lane = Lanes[CclRandom.Random.Next(Lanes.Count)];
                     lane.SpawnPoint.HandleSimulationStep(sender, e);
-                };
+            };
 
        
 

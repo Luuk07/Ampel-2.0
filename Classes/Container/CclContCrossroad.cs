@@ -37,14 +37,14 @@ namespace Ampel__2._0.Classes.Container
             Center.CalculateCurveLeft();
             CreatRoads();
         }
-        public void HandleTimeFactor(object sender, int newValue)
-        {
-            TimeFaktor = newValue;
-            foreach (var car in l_AllCars)
-            {
-                car.updateSpeed();
-            }
-        }
+        //public void HandleTimeFactor(object sender, int newValue)
+        //{
+        //    TimeFaktor = newValue;
+        //    foreach (var car in l_AllCars)
+        //    {
+        //        car.updateSpeed();
+        //    }
+        //}
 
         public void CreatRoads()
         {

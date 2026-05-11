@@ -70,6 +70,11 @@ namespace Ampel__2._0.Classes.Services
             MaxSpeed = 2 * (int)Crossroad.TimeFaktor;
         }
 
+        public void HandleTimeFactor(object sender, int newValue)
+        {
+            updateSpeed();
+        }
+
 
 
         //ToDo: Boolean der sagt er ist raus++
