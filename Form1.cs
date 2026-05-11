@@ -22,24 +22,38 @@ namespace Ampel__2._0
 
         internal Size WindowSize { get; }
 
+        private float scaleX;
+
+        private float scaleY;
+
+
+
         //ToDo: Dynamisch größe anpassen
         public Form1()
         {
             InitializeComponent();
+            this.DoubleBuffered = true; // verhindert flackern
             WindowRectangle = this.ClientRectangle;
             WindowSize = this.ClientSize;
             Main = new CclSvcMain(this.WindowSize);
-            Main.NextStep += Main_NextStep;
             this.Paint += Form1_PaintCenter;
             this.Paint += Form1_PaintRoads;
             this.Paint += Form1_PaintLanes;
             this.Paint += Form1_PaintTrafficLights;
             this.Paint += Form1_PaintCar;
-            this.Paint += Form1_PaintPoints;
+            //this.Paint += Form1_PaintPoints;
 
             Main.TimeFactor = timeFaktorBar.Value/2;
             timeFaktorBar.ValueChanged += TimeFaktorBar_ValueChanged;
-         
+            timeFaktorBar.Anchor =  AnchorStyles.Top;
+
+
+            this.SizeChanged += (s, e) => this.Invalidate();
+            this.Resize += (s, e) => this.Invalidate();
+
+            Main.NextStep += Main_NextStep;
+
+
         }
 
         private void TimeFaktorBar_ValueChanged(object sender, EventArgs e)
@@ -51,21 +65,35 @@ namespace Ampel__2._0
         private void Main_NextStep(object sender, CeaNextStepData e)
         {
             Invalidate();
-            this.DoubleBuffered = true; // verhindert flackern
+            // 800 und 600 sind die Größen des Fensters
+            scaleX = this.ClientSize.Width / 800f;
+            scaleY = this.ClientSize.Height / 600f;
+         
         }
 
         public void Form1_PaintLanes(object sender, PaintEventArgs e)
         {
+            //float scaleX = this.ClientSize.Width / 800f;
+            //float scaleY = this.ClientSize.Height / 600f;
+
             Graphics g = e.Graphics;
 
             foreach (var Lane in Main.Crossroad.Roads.FirstOrDefault(r => r.Direction == Classes.Tools.RoadDirection.EastToWest).Lanes)
             {
-                Rectangle rect = Lane.Area;
+                Rectangle baseRect = Lane.Area;
+
+                Rectangle rect = new Rectangle(
+                    (int)(baseRect.X * scaleX),
+                    (int)(baseRect.Y * scaleY),
+                    (int)(baseRect.Width * scaleX),
+                    (int)(baseRect.Height * scaleY)
+                );
+
                 if (Lane.LeedsToTrafficlight)
                 {
                     using (Brush brush = new SolidBrush(Color.Green))
                     {
-                        g.DrawRectangle(Pens.Blue, Lane.StopArea);
+                        //g.DrawRectangle(Pens.Blue, Lane.StopArea);
                         g.FillRectangle(brush, rect);
                     }
                 }
@@ -79,13 +107,19 @@ namespace Ampel__2._0
             }
             foreach (var Lane in Main.Crossroad.Roads.FirstOrDefault(r => r.Direction == Classes.Tools.RoadDirection.WestToEast).Lanes)
             {
-                Rectangle rect = Lane.Area;
+                Rectangle baseRect = Lane.Area;
 
+                Rectangle rect = new Rectangle(
+                    (int)(baseRect.X * scaleX),
+                    (int)(baseRect.Y * scaleY),
+                    (int)(baseRect.Width * scaleX),
+                    (int)(baseRect.Height * scaleY)
+                );
                 if (Lane.LeedsToTrafficlight)
                 {
                     using (Brush brush = new SolidBrush(Color.Green))
                     {
-                        g.DrawRectangle(Pens.Blue, Lane.StopArea);
+                       // g.DrawRectangle(Pens.Blue, Lane.StopArea);
                         g.FillRectangle(brush, rect);
                     }
                 }
@@ -99,13 +133,20 @@ namespace Ampel__2._0
             }
             foreach (var Lane in Main.Crossroad.Roads.FirstOrDefault(r => r.Direction == Classes.Tools.RoadDirection.NorthToSouth).Lanes)
             {
-                Rectangle rect = Lane.Area;
+                Rectangle baseRect = Lane.Area;
+
+                Rectangle rect = new Rectangle(
+                    (int)(baseRect.X * scaleX),
+                    (int)(baseRect.Y * scaleY),
+                    (int)(baseRect.Width * scaleX),
+                    (int)(baseRect.Height * scaleY)
+                );
 
                 if (Lane.LeedsToTrafficlight)
                 {
                     using (Brush brush = new SolidBrush(Color.Green))
                     {
-                        g.DrawRectangle(Pens.Blue, Lane.StopArea);
+                        //g.DrawRectangle(Pens.Blue, Lane.StopArea);
                         g.FillRectangle(brush, rect);
                     }
                 }
@@ -120,13 +161,20 @@ namespace Ampel__2._0
             }
             foreach (var Lane in Main.Crossroad.Roads.FirstOrDefault(r => r.Direction == Classes.Tools.RoadDirection.SouthToNorth).Lanes)
             {
-                Rectangle rect = Lane.Area;
+                Rectangle baseRect = Lane.Area;
+
+                Rectangle rect = new Rectangle(
+                    (int)(baseRect.X * scaleX),
+                    (int)(baseRect.Y * scaleY),
+                    (int)(baseRect.Width * scaleX),
+                    (int)(baseRect.Height * scaleY)
+                );
 
                 if (Lane.LeedsToTrafficlight)
                 {
                     using (Brush brush = new SolidBrush(Color.Green))
                     {
-                        g.DrawRectangle(Pens.Blue, Lane.StopArea);
+                        //g.DrawRectangle(Pens.Blue, Lane.StopArea);
                         g.FillRectangle(brush, rect);
                     }
                 }
@@ -142,9 +190,20 @@ namespace Ampel__2._0
 
         public void Form1_PaintCenter(object sender, PaintEventArgs e)
         {
+            //float scaleX = this.ClientSize.Width / 800f;
+            //float scaleY = this.ClientSize.Height / 600f;
+
             Graphics g = e.Graphics;
 
-            Rectangle rect = Main.Crossroad.Center.Area;
+
+            Rectangle baseRect = Main.Crossroad.Center.Area;
+
+            Rectangle rect = new Rectangle(
+                (int)(baseRect.X * scaleX),
+                (int)(baseRect.Y * scaleY),
+                (int)(baseRect.Width * scaleX),
+                (int)(baseRect.Height * scaleY)
+            );
 
             using (Brush brush = new SolidBrush(Color.Blue))
             {
@@ -155,11 +214,21 @@ namespace Ampel__2._0
 
         public void Form1_PaintRoads(object sender, PaintEventArgs e)
         {
+            //float scaleX = this.ClientSize.Width / 800f;
+            //float scaleY = this.ClientSize.Height / 600f;
             Graphics g = e.Graphics;
 
             foreach (var Road in Main.Crossroad.Roads)
             {
-                Rectangle rect = Road.Area;
+                Rectangle baseRect = Road.Area;
+
+                Rectangle rect = new Rectangle(
+                    (int)(baseRect.X * scaleX),
+                    (int)(baseRect.Y * scaleY),
+                    (int)(baseRect.Width * scaleX),
+                    (int)(baseRect.Height * scaleY)
+                );
+
 
                 using (Brush brush = new SolidBrush(Color.Black))
                 {
@@ -169,39 +238,65 @@ namespace Ampel__2._0
         }
         public void Form1_PaintCar(object sender, PaintEventArgs e)
         {
+            //float scaleX = this.ClientSize.Width / 800f;
+            //float scaleY = this.ClientSize.Height / 600f;
             Graphics g = e.Graphics;
             foreach (var car in Main.Crossroad.l_AllCars.ToList())
             {
                
-                Rectangle rectCorner = new Rectangle(
-                        (int)car.Position.X,
-                        (int)car.Position.Y,
-                        4, 4
+              
+
+                Rectangle baseRectCar = car.Area;
+
+                Rectangle rect = new Rectangle(
+                    (int)(baseRectCar.X * scaleX),
+                    (int)(baseRectCar.Y * scaleY),
+                    (int)(baseRectCar.Width * scaleX),
+                    (int)(baseRectCar.Height * scaleY)
                 );
+
+
+                Rectangle rectCorner = new Rectangle(
+                       (int)(baseRectCar.X * scaleX),
+                       (int)(baseRectCar.Y * scaleY),
+                       (int)(4*scaleX), (int)(4 * scaleY)
+                );
+
+                Rectangle baseRectCheckLineArea = car.CheckLineArea;
+
+                Rectangle rectCheckLineAre = new Rectangle(
+                   (int)(baseRectCheckLineArea.X * scaleX),
+                   (int)(baseRectCheckLineArea.Y * scaleY),
+                   (int)(baseRectCheckLineArea.Width * scaleX),
+                   (int)(baseRectCheckLineArea.Height * scaleY)
+               );
+
+               
+
                 using (Brush brush = new SolidBrush(Color.Black))
                 {
-                    g.FillRectangle(brush, car.Area);
-                    g.DrawRectangle(Pens.Red, car.CheckLineArea);
+                    g.FillRectangle(brush, rect);
+                    g.DrawRectangle(Pens.Red, rectCheckLineAre);
                 }
                 if (car.Direction == CarDirection.Right)
                 {
                     switch (car.Lane.Road.Direction)
                     {
                         case RoadDirection.NorthToSouth:
-                            rectCorner.Y += 6;
-                            rectCorner.X -= 6;
+                            rectCorner.Y += (int)(baseRectCar.Width / 2 * scaleY);
+                            rectCorner.X -= (int)(baseRectCar.Width / 2 * scaleX); 
                             break;
                         case RoadDirection.WestToEast:
-                            rectCorner.Y += 6;
-                            rectCorner.X += 6;
+                            rectCorner.Y += (int)(baseRectCar.Width / 2 * scaleY);
+                            rectCorner.X += (int)(baseRectCar.Width / 2 * scaleX); 
                             break;
                         case RoadDirection.SouthToNorth:
-                            rectCorner.X += 6;
-                            rectCorner.Y -= 6;
+                            rectCorner.X += (int)(baseRectCar.Width / 2 * scaleX); 
+                            rectCorner.Y -= (int)(baseRectCar.Width / 2 * scaleY);
                             break;
                         case RoadDirection.EastToWest:
-                            rectCorner.X -= 6;
-                            rectCorner.Y -= 6;
+                            rectCorner.X -= (int)(baseRectCar.Width / 2 * scaleX); 
+                            rectCorner.Y -= (int)(baseRectCar.Width / 2 * scaleY); 
                             break;
                         default:
                             break;
@@ -218,26 +313,26 @@ namespace Ampel__2._0
                     switch (car.Lane.Road.Direction)
                     {
                         case RoadDirection.NorthToSouth:
-                            rectCorner.Y += 6;
-                            rectCorner.X += 6;
+                            rectCorner.Y += (int)(baseRectCar.Width / 2 * scaleY);
+                            rectCorner.X += (int)(baseRectCar.Width / 2 * scaleX); 
                             break;
                         case RoadDirection.WestToEast:
-                            rectCorner.Y -= 6;
-                            rectCorner.X += 6;
+                            rectCorner.Y -= (int)(baseRectCar.Width / 2 * scaleY);
+                            rectCorner.X += (int)(baseRectCar.Width / 2 * scaleX); 
                             break;
                         case RoadDirection.SouthToNorth:
-                            rectCorner.X -= 6;
-                            rectCorner.Y -= 6;
+                            rectCorner.X -= (int)(baseRectCar.Width / 2 * scaleX); 
+                            rectCorner.Y -= (int)(baseRectCar.Width / 2 * scaleY);
                             break;
                         case RoadDirection.EastToWest:
-                            rectCorner.X -= 6;
-                            rectCorner.Y += 6;
+                            rectCorner.X -= (int)(baseRectCar.Width / 2 * scaleX); 
+                            rectCorner.Y += (int)(baseRectCar.Width / 2 * scaleY);
                             break;
                         default:
                             break;
                     }
 
-                    using (Brush brush = new SolidBrush(Color.Green))
+                    using (Brush brush = new SolidBrush(Color.Blue))
                     {
                         g.FillRectangle(brush, rectCorner);
                     }
@@ -248,10 +343,19 @@ namespace Ampel__2._0
 
         public void Form1_PaintTrafficLights(object sender, PaintEventArgs e)
         {
+            //float scaleX = this.ClientSize.Width / 800f;
+            //float scaleY = this.ClientSize.Height / 600f;
             Graphics g = e.Graphics;
             foreach (var light in Main.Crossroad.Roads.Select(r => r.TrafficLight))
             {
-                Rectangle rect = light.Area;
+                Rectangle baseRect = light.Area;
+
+                Rectangle rect = new Rectangle(
+                    (int)(baseRect.X * scaleX),
+                    (int)(baseRect.Y * scaleY),
+                    (int)(baseRect.Width * scaleX),
+                    (int)(baseRect.Height * scaleY)
+                );
                 using (Brush brush = new SolidBrush(light.CurrentState == Classes.Tools.TrafficLightState.Green ? Color.Green : light.CurrentState == Classes.Tools.TrafficLightState.YellowGreen || light.CurrentState == Classes.Tools.TrafficLightState.YellowRed ? Color.Yellow : Color.Red))
                 {
                     g.FillRectangle(brush, rect);

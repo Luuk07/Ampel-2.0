@@ -21,9 +21,6 @@ namespace Ampel__2._0.Classes.Services
 
         public CclSvcTrafficLightManager(CclContCrossroad crossroad)
         {
-            //ToDo: Ampelschaltung aus alter version nehmen und Autos sollen nur halten, wenn Ampel rot ist
-            //-> danach mehrere Gelb Stati hinzufügen.
-            
             Crossroad = crossroad;
         }
 
@@ -34,9 +31,7 @@ namespace Ampel__2._0.Classes.Services
              
              SetNextTrafficLightState();
              CalculateNextStateChangeTime(e, e.CurrentSimTime, currentPhase);
-             
-               
-             //TODO: Zeitpunkt in Simulationszeit für den nächsten Phasenwechsel berechnen. NextStateChangeTime = CalculateNextStateChangeTime();
+
           }
 
         }

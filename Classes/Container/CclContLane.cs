@@ -129,16 +129,16 @@ namespace Ampel__2._0.Classes.Container
             switch (Road.Direction)
             {
                 case RoadDirection.NorthToSouth:
-                    StartPoint = new Point(Position.X, Position.Y - Size.Height / 2);
+                    StartPoint = new Point(Position.X, Position.Y - Size.Height / 2 - 20 );
                     break;
                 case RoadDirection.SouthToNorth:
-                    StartPoint = new Point(Position.X, Position.Y + Size.Height / 2);
+                    StartPoint = new Point(Position.X, Position.Y + Size.Height / 2 + 20 );
                     break;
                 case RoadDirection.EastToWest:
-                    StartPoint = new Point(Position.X + Size.Width / 2, Position.Y);
+                    StartPoint = new Point(Position.X + Size.Width / 2 + 20 , Position.Y);
                     break;
                 case RoadDirection.WestToEast:
-                    StartPoint = new Point(Position.X - Size.Width / 2, Position.Y);
+                    StartPoint = new Point(Position.X - Size.Width / 2 - 20, Position.Y);
                     break;
             }
             return StartPoint;

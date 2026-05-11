@@ -22,10 +22,6 @@ namespace Ampel__2._0.Classes.Services
 
         private DateTime LastTickTime;
         private DateTime CurrentSimTime { get; set; }
-
-        //Nicht nur Ampel, sondern auch Geschwindigkeit der Autos, Häufigkeit des Spawns++ 
-        //-> Ist jetzt bei allen relevanten Werten 
-
         internal int TimeFactor
         {
             get => _timeFactor;
